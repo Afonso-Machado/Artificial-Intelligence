@@ -58,7 +58,7 @@ Before you begin, ensure you have the following installed:
 5. **Running the Application**:
     After the installation, run the main program to launch the application:
     ```bash
-    python3 main.py
+    python3 src/main.py
     ```
 
     This will start the **Drone Delivery Optimization** app with a simple GUI where you can choose different problem instances and algorithms to solve the delivery optimization problem.

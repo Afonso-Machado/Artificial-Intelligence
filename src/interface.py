@@ -1,7 +1,7 @@
-# ui.py
+# interface.py
 import tkinter as tk
 from tkinter import messagebox
-import calculations
+import simulation
 
 class App:
     def __init__(self, root):
@@ -36,7 +36,7 @@ class App:
         algorithm = self.algorithm_var.get()
         
         try:
-            result = calculations.solve_problem(problem, algorithm)
+            result = simulation.solve_problem(problem, algorithm)
             messagebox.showinfo("Result", result)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
