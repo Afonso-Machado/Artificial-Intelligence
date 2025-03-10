@@ -1,13 +1,10 @@
 # simulation.py
-from problem_model import ProblemModel
 
-def solve_problem(problem, algorithm):
-    # Initialize Problem Model
-    problem_model = ProblemModel("input/" + problem.lower().replace(" ", "_") + ".in")
 
-    print(problem_model)
-
-    # Based on problem and algorithm selected, return the result
+def run_algorithm(algorithm, products, warehouses, drones, orders):
+    """
+    Run the selected algorithm with the parsed problem data
+    """
     if algorithm == "Hill Climbing":
         return algorithm1()
     elif algorithm == "Simulated Annealing":
@@ -16,6 +13,8 @@ def solve_problem(problem, algorithm):
         return algorithm3()
     elif algorithm == "Genetic Algorithms":
         return algorithm4()
+    else:
+        return f"Unknown algorithm: {algorithm}"
 
 def algorithm1():
     return f"Processed problem with Hill Climbing"
@@ -29,4 +28,3 @@ def algorithm3():
 def algorithm4():
     return f"Processed problem with Genetic Algorithms"
 
-solve_problem("Example", "Hill Climbing")
