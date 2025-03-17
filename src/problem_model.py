@@ -1,96 +1,74 @@
 #problem_model.py
 
-class ProblemModel:
-
-    # Class Constructor
-    def __init__(self, input_file):
-
-        # Open File
-        with open(input_file, 'r') as file:
-            
-            values = self.parse_first_line(file)
-
-            # General Info
-            self.num_rows = values[0]
-            self.num_col = values[1]
-            self.drone_number = values[2]
-            self.deadline = values[3]
-            self.max_drone_load = values[4]
-
-            # Products Type
-            self.products = self.parse_products(file)
-
-            # Warehouses info
-            self.warehouses = self.parse_warehouses(file)
-    
-    # Get problem's parameters
-    def parse_first_line(self, file):
-        line = next(file)
-        return list(map(int, line.split()))
-    
-    # Get product types
-    def parse_products(self, file):
-        num_products = int(file.readline().strip())
-        values = list(map(int, file.readline().strip().split()))
-
-        return [Product(i, weight) for i, weight in enumerate(values)]
-
-    # Get warehouse info
-    def parse_warehouses(self, file):
-        num_warehouses = int(file.readline().strip())
-
-        warehouses = []
-
-        for i in range(num_warehouses):
-            row, column = map(int, file.readline().strip().split())
-            
-            quantities = list(map(int, file.readline().strip().split()))
-
-            warehouse = Warehouse(i, row, column, quantities)
-            warehouses.append(warehouse)
-        
-        return warehouses
-
-    # Define a printing function
-    def __repr__(self):
-        repr_str = (f"ProblemModel:\n"
-                f"    Number of rows:      {self.num_rows}\n"
-                f"    Number of columns:   {self.num_col}\n"
-                f"    Number of drones:    {self.drone_number}\n"
-                f"    Max number of turns: {self.deadline}\n"
-                f"    Max Drone Capacity:  {self.max_drone_load}\n"
-                "\n"
-                f"    Products:\n")
-        
-        for product in self.products:
-            repr_str += f"        {repr(product)}\n"
-        
-        repr_str += f"\n    Warehouses:\n"
-        for warehouse in self.warehouses:
-            repr_str += f"{repr(warehouse)}\n"
-        
-        return repr_str
-
-
 class Product:
     # Class Constructor
-    def __init__(self, product_id, weight):
+    def __init__(self, product_id,product_type):
         self.product_id = product_id
-        self.weight = weight
+        self.product_type = product_type
 
     # Define a printing function
     def __repr__(self):
-        return f"Product: id={self.product_id}, weight={self.weight}"
+        return f"Product: id={self.product_id}"
+
+class Drone:
+    def __init__(self, id, start_row, start_col):
+        self.id = id
+        self.row = start_row  
+        self.column = start_col
+        self.current_item = None
+        self.available_at_turn = 0 
+    
+    def load_item(self, product_id): 
+        if self.current_item is None:
+            self.current_item = product_id
+            return True
+        return False
+    
+    def unload_item(self, product_id):
+      
+        if self.current_item is not None:
+            product_id = self.current_item
+            self.current_item = None
+            return product_id
+        return None
+    
+    def move_to(self, row, column, turn):
+        
+        distance = int(((row - self.row) ** 2 + (column - self.column) ** 2) ** 0.5)
+        self.row = row
+        self.column = column
+        self.available_at_turn = turn + distance + 1
+        return distance + 1
+    
+    def __repr__(self):
+        item_info = f"carrying product {self.current_item}" if self.current_item is not None else "empty"
+        return (f"Drone {self.id}: position=({self.row}, {self.column}), "
+                f"{item_info}, available_at_turn={self.available_at_turn}")
 
 
-class Warehouse:
-    def __init__(self, id, row, column, quantities):
+class Order:
+    def __init__(self, id, row, column, product_items):
         self.id = id
         self.row = row
         self.column = column
-        self.quantities = quantities
+        self.product_items = product_items  
+        self.completed = False
+        self.completion_turn = -1
+    
+    def is_product_needed(self, product_id):
+       
+        return product_id in self.product_items
+    
+    def deliver_product(self, product_id):
+        
+        if product_id in self.product_items:
+            self.product_items.remove(product_id)
+            if len(self.product_items) == 0:
+                self.completed = True
+            return True
+        return False
     
     def __repr__(self):
-        return (f"        Warehouse {self.id}: row={self.row}, column={self.column}\n"
-                f"            Quantities: {self.quantities}")
-
+        status = "Completed" if self.completed else "Pending"
+        return (f"Order {self.id}: delivery_location=({self.row}, {self.column}), "
+                f"status={status}, remaining_items={len(self.product_items)}")
