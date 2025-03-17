@@ -1,12 +1,12 @@
 # interface.py
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
+import simulation
 
 class App:
-    def __init__(self, root, solve_function):
+    def __init__(self, root):
         self.root = root
         self.root.title("Drone Delivery Optimization")
-        self.solve_function = solve_function
 
         # Set a minimum window size
         self.root.minsize(600, 500)
@@ -50,7 +50,8 @@ class App:
             self.root.update()
             
             # Call the solve function from main
-            result = self.solve_function(problem, algorithm)
+
+            result = simulation.run_algorithm(algorithm,problem)
             
             # Display result
             self.result_area.delete(1.0, tk.END)
