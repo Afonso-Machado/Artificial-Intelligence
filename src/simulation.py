@@ -122,11 +122,11 @@ def generate_random_initial_solution():
 
     # round-robin assignment of products to drones
     drone_index = 0
-    '''
+    
     for product_id in all_needed_products:
         solution[drone_index].append(product_id)
         drone_index = (drone_index + 1) % len(drones)
-    '''
+    
     return solution
 
 def evaluate_solution(solution, return_status=False):
@@ -313,16 +313,19 @@ def remove_item_from_solution(solution):
             
 
 def add_item_to_solution(solution):
-    #print(f"Orders:{products}\n")
-    drone = random.choice(solution)
+    # Choose a random drone index
+    drone_index = random.randrange(len(solution))
+    
+    # Build list of all items currently assigned
     list_of_items = []
-    for drone in solution:
-        list_of_items.extend(drone)
-    #print(f"ListofItems:{list_of_items}\n")
+    for d in solution:  
+        list_of_items.extend(d)
+    
+    # Find an unassigned item
     for item in products:
         if item.product_id not in list_of_items:
-            #print("Adicionando item")
-            drone.append(item.product_id)
+            # Add to the randomly selected drone
+            solution[drone_index].append(item.product_id)
             return solution
 
     return -1
@@ -366,7 +369,7 @@ def run_algorithm(algorithm, problem):
         #print_problem_info()
         return get_hc_solution(1000, True)
     elif algorithm == "Simulated Annealing":
-        return algorithm2()
+        return get_sa_solution(1000, True)
     elif algorithm == "Tabu Search":
         return get_sa_solution()
     elif algorithm == "Genetic Algorithms":
@@ -401,14 +404,12 @@ def get_hc_solution(num_iterations, log=False):
         if (not check_if_feasible(neighbor)):
             continue      
         neighbor_eval, neighbor_status = evaluate_solution(neighbor, return_status=True)
-
         if (neighbor_eval > best_score):
             best_score = neighbor_eval
             best_solution = copy.deepcopy(neighbor)
             itNoImp = 0
-            
+            print(f"Current best solution: {best_solution}, score: {best_score}")
             if update_callback:
-                print(f"Current best score to give to update: {best_score}")
                 # Pass solution, score and status to callback
                 update_callback(best_solution, best_score, neighbor_status)
                 time.sleep(0.1)  # Small delay to see changes
@@ -440,7 +441,14 @@ def get_sa_solution(num_iterations, log=False):
         itNoImp += 1
         
         neighbor = get_random_neighbor_function(solution)
-        neighbor_eval = evaluate_solution(neighbor)
+        if neighbor == -1:
+            continue  # Skip invalid neighbors
+            
+        # Check if the solution is feasible
+        if not check_if_feasible(neighbor):
+            continue
+
+        neighbor_eval, neighbor_status = evaluate_solution(neighbor, return_status=True)
         delta = -(score - neighbor_eval)
 
         if (delta > 0 or np.exp(delta/temperature)>random.random()):
@@ -450,6 +458,11 @@ def get_sa_solution(num_iterations, log=False):
                 best_solution = solution
                 best_score = score
                 itNoImp = 0
+                if update_callback:
+                    print(f"Current best score to give to update: {best_score}")
+                    # Pass solution, score and status to callback
+                    update_callback(best_solution, best_score, neighbor_status)
+                    time.sleep(0.1)  # Small delay to see changes
         
         if log:
             print(f"Solution:       {best_solution}, score: {best_score},  Temp: {temperature}")
