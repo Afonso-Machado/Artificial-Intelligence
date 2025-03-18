@@ -5,6 +5,7 @@ import random
 import numpy as np
 import copy
 from problem_model import Drone, Order, Product
+import time
 
 num_rows = 0
 num_col = 0
@@ -14,6 +15,12 @@ warehouse_col = 0
 drones = []
 orders = []
 products = []
+update_callback = None
+
+def register_update_callback(callback):
+    """Register a callback function to be called whenever a new best solution is found"""
+    global update_callback
+    update_callback = callback
 
 def parse_input_file(input_file):
     global num_rows, num_col, Turns, products, warehouse_row, warehouse_col, drones, orders
@@ -115,13 +122,14 @@ def generate_random_initial_solution():
 
     # round-robin assignment of products to drones
     drone_index = 0
+    '''
     for product_id in all_needed_products:
         solution[drone_index].append(product_id)
         drone_index = (drone_index + 1) % len(drones)
-    
+    '''
     return solution
 
-def evaluate_solution(solution):
+def evaluate_solution(solution, return_status=False):
    
     orders_copy = copy.deepcopy(orders)
     drones_copy = copy.deepcopy(drones)
@@ -177,10 +185,15 @@ def evaluate_solution(solution):
     # Calculate solution value
     # If no orders were completed, return 0
     if completed_orders == 0:
-        return 0
+        solution_value = 0
+    else:
+        # If all orders were completed, use the formula
+        solution_value = completed_orders * Turns - max_turn
     
-    # If all orders were completed, use the formula
-    solution_value = completed_orders * Turns - max_turn
+    # Return additional data if requested
+    if return_status:
+        order_status = [order.completed for order in orders_copy]
+        return solution_value, order_status
     return solution_value
 
 
@@ -237,6 +250,51 @@ def check_if_feasible(solution):
             return False
         
     return True
+def get_orders_status(solution):
+    """
+    Returns an array of order completion status based on a solution
+    without modifying the original orders
+    """
+    orders_copy = copy.deepcopy(orders)
+    drones_copy = copy.deepcopy(drones)
+    
+    # Product to order mapping for quick lookup
+    product_to_order = {}
+    for order in orders_copy:
+        for product_id in order.product_items:
+            product_to_order[product_id] = order.id
+    
+    # Process each drone's assigned products
+    for drone_id, assigned_products in enumerate(solution):
+        drone = drones_copy[drone_id]
+        current_turn = 0
+        for product_id in assigned_products:
+            order_id = product_to_order.get(product_id)
+            if order_id is not None:
+                order = orders_copy[order_id]
+                
+                # Wait until drone is available
+                current_turn = max(current_turn, drone.available_at_turn)
+                
+                # 1. Go to warehouse to load the product
+                distance_to_warehouse = drone.move_to(warehouse_row, warehouse_col, current_turn)
+                current_turn += distance_to_warehouse
+                
+                # 2. Load the product (takes 1 turn)
+                drone.load_item(product_id)
+                current_turn += 1
+                
+                # 3. Go to delivery location
+                distance_to_delivery = drone.move_to(order.row, order.column, current_turn)
+                current_turn += distance_to_delivery
+                
+                # 4. Deliver the product (takes 1 turn)
+                drone.unload_item(product_id)
+                order.deliver_product(product_id)
+                current_turn += 1
+    
+    # Return list of completion status
+    return [order.completed for order in orders_copy]
 
 def remove_item_from_solution(solution):
     
@@ -323,12 +381,17 @@ def get_hc_solution(num_iterations, log=False):
     iteration = 0
     itNoImp = 0
     best_solution = generate_random_initial_solution()
-    best_score = evaluate_solution(best_solution)
+    # Get score and order status for initial solution
+    best_score, order_status = evaluate_solution(best_solution, return_status=True)
     
+    if update_callback:
+        # Pass both solution, score, order status, and is_initial=True
+        update_callback(best_solution, best_score, order_status, True)
+        time.sleep(1)  # Slightly longer delay to see initial solution
+
     print(f"Initial score: {best_score}\n")
     
     while iteration < num_iterations and itNoImp < 10000:
-        print(f"Iteration: {iteration}")
         iteration += 1
         itNoImp += 1
         neighbor = get_random_neighbor_function(best_solution)
@@ -337,13 +400,19 @@ def get_hc_solution(num_iterations, log=False):
             continue
         if (not check_if_feasible(neighbor)):
             continue      
-        neighbor_eval = evaluate_solution(neighbor)
+        neighbor_eval, neighbor_status = evaluate_solution(neighbor, return_status=True)
 
         if (neighbor_eval > best_score):
             best_score = neighbor_eval
             best_solution = copy.deepcopy(neighbor)
             itNoImp = 0
             
+            if update_callback:
+                print(f"Current best score to give to update: {best_score}")
+                # Pass solution, score and status to callback
+                update_callback(best_solution, best_score, neighbor_status)
+                time.sleep(0.1)  # Small delay to see changes
+
             if log:
                 (print(f"Current best score: {best_score}"))
             
