@@ -15,10 +15,6 @@ def main():
     root.mainloop()
     #simulation.run_algorithm("Hill Climbing", "Busy Day")
     
-    
-    
-    
-    
 
 if __name__ == "__main__":
     main()

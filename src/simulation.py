@@ -199,7 +199,6 @@ def evaluate_solution(solution, return_status=False):
 
 
 def check_if_feasible(solution):
-   
     orders_copy = copy.deepcopy(orders)
     drones_copy = copy.deepcopy(drones)
     # Product to order mapping for quick lookup
@@ -218,8 +217,7 @@ def check_if_feasible(solution):
             
             order_id = product_to_order[product_id]
             order = orders_copy[order_id]
-            
-            
+                      
             # Wait until drone is available
             current_turn = max(current_turn, drone.available_at_turn)
             
@@ -250,7 +248,11 @@ def check_if_feasible(solution):
             return False
         
     return True
+
+
+
 def get_orders_status(solution):
+
     """
     Returns an array of order completion status based on a solution
     without modifying the original orders
@@ -314,6 +316,7 @@ def remove_item_from_solution(solution):
 
 def add_item_to_solution(solution):
     # Choose a random drone index
+    
     drone_index = random.randrange(len(solution))
     
     # Build list of all items currently assigned
@@ -350,8 +353,8 @@ def swap_items_in_solution(solution):
     return solution
 
 def get_random_neighbor_function(solution):
-    function_list = [add_item_to_solution, remove_item_from_solution, swap_items_in_solution]
-    choice = random.randint(0,2)
+    function_list = [remove_item_from_solution]
+    choice = random.randint(0,0)
 
 
     return function_list[choice](solution)
@@ -369,7 +372,7 @@ def run_algorithm(algorithm, problem):
         #print_problem_info()
         return get_hc_solution(1000, True)
     elif algorithm == "Simulated Annealing":
-        return get_sa_solution(1000, True)
+        return get_sa_solution(10000, True)
     elif algorithm == "Tabu Search":
         return get_sa_solution()
     elif algorithm == "Genetic Algorithms":
@@ -383,6 +386,7 @@ def run_algorithm(algorithm, problem):
 def get_hc_solution(num_iterations, log=False):
     iteration = 0
     itNoImp = 0
+    itNoImpMax = num_iterations/10
     best_solution = generate_random_initial_solution()
     # Get score and order status for initial solution
     best_score, order_status = evaluate_solution(best_solution, return_status=True)
@@ -394,28 +398,40 @@ def get_hc_solution(num_iterations, log=False):
 
     print(f"Initial score: {best_score}\n")
     
-    while iteration < num_iterations and itNoImp < 10000:
+    while iteration < num_iterations and itNoImp < itNoImpMax:
         iteration += 1
         itNoImp += 1
+        print(f"Best Solution before get_neighbor in iter: {iteration} - {best_solution}\n\n")
+
         neighbor = get_random_neighbor_function(best_solution)
-        
+        print(f"Best Solution after get_neighbor in iter: {iteration} - {best_solution}\n\n")
+
         if(neighbor == -1):
             continue
+        print(f"Best Solution before is feasible in iter: {iteration} - {best_solution}\n\n")
+
         if (not check_if_feasible(neighbor)):
-            continue      
+            continue
+        print(f"Best Solution after is feasible in iter: {iteration} - {best_solution}\n\n")
+
         neighbor_eval, neighbor_status = evaluate_solution(neighbor, return_status=True)
+        print(f"Best Solution after evaluate solution in iter: {iteration} - {best_solution}\n\n")
+
         if (neighbor_eval > best_score):
             best_score = neighbor_eval
+            #print(f"Neighbor b4 copy: {best_solution}")
             best_solution = copy.deepcopy(neighbor)
+            #print(f"Neighbor after copy: {best_solution}\n\n")
             itNoImp = 0
-            print(f"Current best solution: {best_solution}, score: {best_score}")
-            if update_callback:
+            #print(f"Current best solution: {best_solution}, score: {best_score}")
+            #if update_callback:
                 # Pass solution, score and status to callback
-                update_callback(best_solution, best_score, neighbor_status)
-                time.sleep(0.1)  # Small delay to see changes
+                #update_callback(best_solution, best_score, neighbor_status)
+                #time.sleep(0.1)  # Small delay to see changes
+        
+        print(f"Last Best Solution before iter: {iteration} - {best_solution}\n\n")
 
-            if log:
-                (print(f"Current best score: {best_score}"))
+           
             
     print(f"Final score: {best_score}")
     return best_solution
@@ -426,16 +442,22 @@ def get_hc_solution(num_iterations, log=False):
 def get_sa_solution(num_iterations, log=False):
     iteration = 0
     itNoImp = 0
+    itNoImpMax = num_iterations/10
     temperature = 1000
     solution = generate_random_initial_solution() # Best solution after 'num_iterations' iterations without improvement
-    score = evaluate_solution(solution)
+    score, order_status = evaluate_solution(solution, return_status=True)
     
     best_solution = copy.deepcopy(solution)
     best_score = score
     
-    print(f"Init Solution:  {best_solution}, score: {best_score}")
+    if update_callback:
+        # Pass both solution, score, order status, and is_initial=True
+        update_callback(best_solution, best_score, order_status, True)
+        time.sleep(1)  # Slightly longer delay to see initial solution
+
+    print(f"Initial score: {best_score}\n")
     
-    while iteration < num_iterations and itNoImp < 10000:
+    while iteration < num_iterations and itNoImp < itNoImpMax:
         temperature = temperature * 0.999  
         iteration += 1
         itNoImp += 1
@@ -453,19 +475,19 @@ def get_sa_solution(num_iterations, log=False):
 
         if (delta > 0 or np.exp(delta/temperature)>random.random()):
             solution = copy.deepcopy(neighbor)
-            score = evaluate_solution(solution)
+            score, order_status = evaluate_solution(solution, return_status=True)
             if score > best_score:
                 best_solution = solution
                 best_score = score
                 itNoImp = 0
+                if log:
+                    print(f"Solution:       {best_solution}, score: {best_score},  Temp: {temperature}")
                 if update_callback:
-                    print(f"Current best score to give to update: {best_score}")
                     # Pass solution, score and status to callback
-                    update_callback(best_solution, best_score, neighbor_status)
+                    update_callback(best_solution, best_score, order_status)
                     time.sleep(0.1)  # Small delay to see changes
         
-        if log:
-            print(f"Solution:       {best_solution}, score: {best_score},  Temp: {temperature}")
+        
                 
     print(f"Final Solution: {best_solution}, score: {best_score}")
     return best_solution 
@@ -474,8 +496,102 @@ def get_sa_solution(num_iterations, log=False):
 ###############
 # Tabu Search #
 ###############
-def algorithm3():
-    return f"Processed problem with Tabu Search"
+def get_tabu_solution(num_iterations=1000, tabu_size=10, log=False):
+    """
+    Implements Tabu Search algorithm
+    
+    Parameters:
+    - num_iterations: maximum number of iterations
+    - tabu_size: size of the tabu list (how many recent moves to remember)
+    - log: whether to print progress information
+    
+    Returns:
+    - best solution found
+    """
+    # Initialize parameters
+    iteration = 0
+    itNoImp = 0
+    itNoImpMax = num_iterations/10
+    
+    # Generate initial solution and evaluate it
+    current_solution = generate_random_initial_solution()
+    current_score, current_status = evaluate_solution(current_solution, return_status=True)
+    
+    # Set initial best solution
+    best_solution = copy.deepcopy(current_solution)
+    best_score = current_score
+    
+    # Initialize tabu list as a list of (drone_index, product_id, operation_type) tuples
+    # operation_type: 1=add, 2=remove, 3=swap_from, 4=swap_to
+    tabu_list = []
+    
+    # For visualization
+    if update_callback:
+        update_callback(best_solution, best_score, current_status, True)
+        time.sleep(1)  # Longer delay to see initial solution
+
+    print(f"Initial score: {best_score}\n")
+    
+    # Main loop
+    while iteration < num_iterations and itNoImp < itNoImpMax:
+        iteration += 1
+        itNoImp += 1
+        
+        
+        neighbor_solution = get_random_neighbor_function(current_solution)
+        
+        if neighbor_solution == -1:
+            continue  # Skip invalid neighbors
+            
+        # Check if the solution is feasible
+        if not check_if_feasible(neighbor_solution):
+            continue
+        
+        neighbor_score, neighbor_status = evaluate_solution(neighbor_solution, return_status=True)
+
+        # Check if this move is in the tabu list
+        
+        if(neighbor_solution in tabu_list):
+            is_tabu = True
+        else:
+            is_tabu = False
+        
+        
+        # If we found a better neighbor
+        if neighbor_score > current_score and not is_tabu:
+          
+            best_score = current_score
+            itNoImp = 0
+            
+            if update_callback:
+                update_callback(best_solution, best_score, best_neighbor_status, False)
+                time.sleep(0.1)  # Small delay to see changes
+            
+            if log:
+                print(f"Iteration {iteration}, new best score: {best_score}")
+            
+            # Add move to tabu list
+            for move_part in best_neighbor_move:
+                tabu_list.append(move_part)
+                
+            # Keep tabu list at the desired size
+            while len(tabu_list) > tabu_size:
+                tabu_list.pop(0)
+        else:
+            # If no feasible neighbor was found, try a random one
+            random_neighbor = get_random_neighbor_function(current_solution)
+            if random_neighbor != -1 and check_if_feasible(random_neighbor):
+                current_solution = random_neighbor
+                current_score = evaluate_solution(current_solution)
+    
+        #Aspiration criteria
+        if is_tabu and neighbor_score > best_score: #
+            best_solution = copy.deepcopy(current_solution)
+            best_score = neighbor_score
+            itNoImp = 0
+
+    print(f"Final score: {best_score}")
+    return best_solution
 
 #####################
 # Genetic Algorithm #
