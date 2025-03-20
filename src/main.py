@@ -8,16 +8,12 @@ import simulation
 
 
 def main():
-    #root = tk.Tk()
+    root = tk.Tk()
     
-    #app = App(root)
+    app = App(root)
  
-    #root.mainloop()
-    simulation.run_algorithm("Hill Climbing", "Busy Day")
-    
-    
-    
-    
+    root.mainloop()
+    #simulation.run_algorithm("Hill Climbing", "Busy Day")
     
 
 if __name__ == "__main__":
