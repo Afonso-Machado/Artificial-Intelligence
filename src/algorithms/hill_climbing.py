@@ -26,7 +26,7 @@ def get_hc_solution(num_iterations, solution_generator, solution_evaluator, neig
 
         neighbor_eval = solution_evaluator(neighbor)
 
-        if (neighbor_eval > best_score):
+        if (neighbor_eval >= best_score):
             best_score = neighbor_eval
             best_solution = neighbor
             itNoImp = 0

@@ -40,7 +40,7 @@ def run_algorithm(problem: str, algorithm: str) -> str:
 
     # Run algorithm
     if algorithm == "Hill Climbing":
-        return get_hc_solution(1000, generate_random_solution, evaluate_solution, get_random_neighbor_function)
+        return get_hc_solution(10000, generate_random_solution, evaluate_solution, get_random_neighbor_function)
     elif algorithm == "Simulated Annealing":
         return "Not yet implemented"
         #return algorithm2()
@@ -170,9 +170,15 @@ def add_product_to_solution(solution: List[List[Product]]) -> List[List[Product]
     if not unassigned_products:
         return -1
 
-    # Pick a random unassigned product and add it to choosen drone
-    product_index = random.randrange(len(unassigned_products))
-    new_solution[drone_index].append(unassigned_products[product_index])
+    # Pick a random unassigned product
+    product = random.choice(unassigned_products)
+
+    # Check if product can be added to drone
+    if (get_drone_cost(new_solution[drone_index]) + orders[product.order_id].delivery_cost > max_turns):
+        return -1
+
+    # Add product to drone
+    new_solution[drone_index].append(product)
 
     return new_solution
 
@@ -190,8 +196,8 @@ def remove_product_from_solution(solution: List[List[Product]]) -> Union[List[Li
     drone_index = random.choice(non_empty_drones)
 
     # Pick a random product from that drone and remove it
-    product_index = random.randrange(len(new_solution[drone_index]))
-    del new_solution[drone_index][product_index]
+    product = random.choice(new_solution[drone_index])
+    new_solution[drone_index].remove(product)
 
     return new_solution
 
@@ -214,10 +220,17 @@ def swap_products_in_solution(solution: List[List[Product]]) -> List[List[Produc
     product_1 = random.choice(drone_products_1)
     product_2 = random.choice(drone_products_2)
 
-    # Swap products
+    # Remove original products
     drone_products_1.remove(product_1)
     drone_products_2.remove(product_2)
+    
+    # Check if new products can be added
+    if (get_drone_cost(drone_products_1) + orders[product_2.order_id].delivery_cost > max_turns):
+        return -1
+    if (get_drone_cost(drone_products_2) + orders[product_1.order_id].delivery_cost > max_turns):
+        return -1
 
+    # Add new products
     drone_products_1.append(product_2)
     drone_products_2.append(product_1)
 
