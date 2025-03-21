@@ -8,6 +8,7 @@ from typing import List, Union
 from parsing import parse_input_file
 from problem_model import Order, Product
 from algorithms.hill_climbing import get_hc_solution
+from algorithms.simulated_anealing import get_sa_solution
 
 ##########################
 #    Global Variables    #
@@ -42,8 +43,7 @@ def run_algorithm(problem: str, algorithm: str) -> str:
     if algorithm == "Hill Climbing":
         return get_hc_solution(10000, generate_random_solution, evaluate_solution, get_random_neighbor_function)
     elif algorithm == "Simulated Annealing":
-        return "Not yet implemented"
-        #return algorithm2()
+        return get_sa_solution(10000, 1000, 0.999, generate_random_solution, evaluate_solution, get_random_neighbor_function)
     elif algorithm == "Tabu Search":
         return "Not yet implemented"
         #return get_sa_solution()
