@@ -1,74 +1,71 @@
-#problem_model.py
-
-class Product:
-    # Class Constructor
-    def __init__(self, product_id,product_type):
-        self.product_id = product_id
-        self.product_type = product_type
-
-    # Define a printing function
-    def __repr__(self):
-        return f"Product: id={self.product_id}"
-
-class Drone:
-    def __init__(self, id, start_row, start_col):
-        self.id = id
-        self.row = start_row  
-        self.column = start_col
-        self.current_item = None
-        self.available_at_turn = 0 
-    
-    def load_item(self, product_id): 
-        if self.current_item is None:
-            self.current_item = product_id
-            return True
-        return False
-    
-    def unload_item(self, product_id):
-      
-        if self.current_item is not None:
-            product_id = self.current_item
-            self.current_item = None
-            return product_id
-        return None
-    
-    def move_to(self, row, column, turn):
-        
-        distance = int(((row - self.row) ** 2 + (column - self.column) ** 2) ** 0.5)
-        self.row = row
-        self.column = column
-        self.available_at_turn = turn + distance + 1
-        return distance + 1
-    
-    def __repr__(self):
-        item_info = f"carrying product {self.current_item}" if self.current_item is not None else "empty"
-        return (f"Drone {self.id}: position=({self.row}, {self.column}), "
-                f"{item_info}, available_at_turn={self.available_at_turn}")
-
+# order.py
+import math
 
 class Order:
-    def __init__(self, id, row, column, product_items):
+    def __init__(self, id, row, column, product_list):
         self.id = id
         self.row = row
         self.column = column
-        self.product_items = product_items  
-        self.completed = False
-        self.completion_turn = -1
-    
-    def is_product_needed(self, product_id):
-       
-        return product_id in self.product_items
-    
-    def deliver_product(self, product_id):
+        self.product_list = product_list
+
+    def calculate_fly_distance(self, x_coord, y_coord):
+        # Cost of flying to target
+        distance = math.sqrt((self.row - x_coord)**2 + (self.column - y_coord)**2)
+        distance = math.ceil(distance)
         
-        if product_id in self.product_items:
-            self.product_items.remove(product_id)
-            if len(self.product_items) == 0:
-                self.completed = True
-            return True
-        return False
+        self.fly_cost = distance
+
+        return distance
+
+    def calculate_delivery_cost(self, warehouse_row, warehouse_col):
+        delivery_cost = 0
+
+        # Cost of loading item
+        delivery_cost += 1
+
+        # Cost of flying to target
+        distance = self.calculate_fly_distance(warehouse_row, warehouse_col)
+        delivery_cost += distance
+
+        # Cost of delivering item
+        delivery_cost += 1
+
+        # Cost of flying back to warehouse
+        delivery_cost += distance
+
+        self.delivery_cost = delivery_cost
     
+    def clear_deliveries(self):
+        for product in self.product_list:
+            product.delivered = False
+    
+    def clear_assignements(self):
+        for product in self.product_list:
+            product.assigned = False
+    
+    def is_completed(self) -> bool:
+        return all(product.delivered for product in self.product_list)
+    
+    def get_unassigned_products(self):
+        return [product for product in self.product_list if not product.assigned]
+
     def __repr__(self):
-        status = "Completed" if self.completed else "Pending"
-        return (f"Order {self.id}: delivery_location=({self.row}, {self.column}), "
-                f"status={status}, remaining_items={len(self.product_items)}")
+        return (f"Order {self.id} (delivery_location=({self.row}, {self.column}), "
+                f"number_of_items={len(self.product_list)}, item_delivery_cost={self.delivery_cost})")
+
+class Product:
+    def __init__(self, id, order_id):
+        self.id = id
+        self.order_id = order_id
+        self.delivered = False
+        self.assigned = False
+    
+    def set_delivered(self):
+        self.delivered = True
+    
+    def set_assigned(self):
+        self.assigned = True
+
+    def __repr__(self):
+        return (f"Product {self.id} (belongs_to={self.order_id})")
+    
