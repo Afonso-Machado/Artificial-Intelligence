@@ -77,9 +77,13 @@ def generate_random_solution() -> List[List[Product]]:
     # Round-robin assignment of products to drones
     drone_index: int = 0
     
-    for product_id in all_needed_products:
-        solution[drone_index].append(product_id)
-        drone_index = (drone_index + 1) % drone_number
+    for product in all_needed_products:
+        # Add item to drone if it is feasible otherwise skip item
+        if (get_drone_cost(solution[drone_index]) + orders[product.order_id].delivery_cost <= max_turns):
+            solution[drone_index].append(product)
+            drone_index = (drone_index + 1) % drone_number
+        else:
+            continue
     
     return solution
 
