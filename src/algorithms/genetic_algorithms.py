@@ -22,16 +22,7 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
     print(f"Initial solution score: {best_score}")
     
     while(num_iterations > 0):
-        # Advance iteration
-        print(f"Generation {generation_no}")
-        
-        #DEBUG
-        total = 0
-        for solution in population:
-            total += solution_evaluator(solution)
-        print(total/population_size)
-        #END DEBUG
-            
+        # Advance iteration            
         generation_no += 1
         
         # Selected parents for crossover
