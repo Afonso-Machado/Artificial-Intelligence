@@ -10,7 +10,8 @@ def get_hc_solution(num_iterations, solution_generator, solution_evaluator, neig
     best_solution = solution_generator()
     best_score = solution_evaluator(best_solution)
     
-    print(f"Initial Solution: {best_solution}, score: {best_score}")
+    #print(f"Initial Solution: {best_solution}, score: {best_score}")
+    print(f"Initial Solution score: {best_score}")
 
     while iteration < num_iterations and itNoImp < itNoImpMax:
         # Advance Iteration
@@ -30,7 +31,10 @@ def get_hc_solution(num_iterations, solution_generator, solution_evaluator, neig
             best_score = neighbor_eval
             best_solution = neighbor
             itNoImp = 0
-            print(f"Found better solution: {best_solution}, score: {best_score}")
+            #print(f"Found better solution: {best_solution}, score: {best_score}")
+            print(f"Found better solution score: {best_score}")
 
-    print(f"Final Solution: {best_solution}, score: {best_score}")
-    return best_solution
+    #print(f"Final Solution: {best_solution}, score: {best_score}")
+    print(f"Final Solution score: {best_score}")
+    #return best_solution
+    return best_score

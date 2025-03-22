@@ -1,5 +1,5 @@
 # simulated_anealing.py
-import numpy as np # type: ignore
+import numpy as np
 import random
 
 def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_generator, solution_evaluator, neighbor_generator):
@@ -17,7 +17,8 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
     best_solution = solution
     best_score = score
 
-    print(f"Initial Solution: {best_solution}, score: {best_score}")
+    #print(f"Initial Solution: {best_solution}, score: {best_score}")
+    print(f"Initial Solution score: {best_score}")
     
     while iteration < num_iterations and itNoImp < itNoImpMax:
         # Advance iteration
@@ -42,7 +43,10 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
                 best_solution = solution
                 best_score = score
                 itNoImp = 0
-                print(f"Found better solution: {best_solution}, score: {best_score}")
+                #print(f"Found better solution: {best_solution}, score: {best_score}")
+                print(f"Found better solution score: {best_score}")
                 
-    print(f"Final Solution: {best_solution}, score: {best_score}")
-    return best_solution 
+    #print(f"Final Solution: {best_solution}, score: {best_score}")
+    print(f"Final Solution score: {best_score}")
+    #return best_solution
+    return best_score
