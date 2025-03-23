@@ -10,6 +10,7 @@ from problem_model import Order, Product
 from algorithms.hill_climbing import get_hc_solution
 from algorithms.simulated_anealing import get_sa_solution
 from algorithms.genetic_algorithms import get_ga_solution
+from algorithms.tabu_search import get_ts_solution
 
 ##########################
 #    Global Variables    #
@@ -46,8 +47,7 @@ def run_algorithm(problem: str, algorithm: str) -> str:
     elif algorithm == "Simulated Annealing":
         return get_sa_solution(10000, 1000, 0.999, generate_random_solution, evaluate_solution, get_random_neighbor_function)
     elif algorithm == "Tabu Search":
-        return "Not yet implemented"
-        #return get_sa_solution()
+        return get_ts_solution(10000, 10, generate_random_solution, evaluate_solution, get_random_neighbor_function)
     elif algorithm == "Genetic Algorithms":
         return get_ga_solution(1000, 30, generate_random_solution, evaluate_solution, order_based_crossover, get_random_neighbor_function)
     else:
@@ -143,7 +143,7 @@ def check_if_feasible(solution: List[List[Product]]) -> bool:
 - Neighboorhood/Mutation -
 -       Functions        -
 -----------------------"""
-def add_product_to_solution(solution: List[List[Product]]) -> List[List[Product]]:
+def add_product_to_solution(solution: List[List[Product]], get_move_info: bool = False) -> List[List[Product]]:
     # Make a shallow copy of the given solution
     new_solution = [drone_products.copy() for drone_products in solution]
 
@@ -179,9 +179,13 @@ def add_product_to_solution(solution: List[List[Product]]) -> List[List[Product]
     # Add product to drone
     new_solution[drone_index].append(product)
 
+    # Return info about chosen move (Tabu Search related)
+    if get_move_info:
+        return (new_solution, ("add", product.id, drone_index))
+
     return new_solution
 
-def remove_product_from_solution(solution: List[List[Product]]) -> Union[List[List[Product]], int]:
+def remove_product_from_solution(solution: List[List[Product]], get_move_info: bool = False) -> Union[List[List[Product]], int]:
     # Make a shallow copy of the given solution
     new_solution = [drone_products.copy() for drone_products in solution]
 
@@ -198,9 +202,13 @@ def remove_product_from_solution(solution: List[List[Product]]) -> Union[List[Li
     product = random.choice(new_solution[drone_index])
     new_solution[drone_index].remove(product)
 
+    # Return info about chosen move (Tabu Search related)
+    if get_move_info:
+        return (new_solution, ("remove", product.id, drone_index))
+
     return new_solution
 
-def swap_products_in_solution(solution: List[List[Product]]) -> List[List[Product]]:
+def swap_products_in_solution(solution: List[List[Product]], get_move_info: bool = False) -> List[List[Product]]:
     # Check if there are more than 1 drone
     if drone_number <= 1:
         return -1
@@ -232,12 +240,20 @@ def swap_products_in_solution(solution: List[List[Product]]) -> List[List[Produc
     # Add new products
     drone_products_1.append(product_2)
     drone_products_2.append(product_1)
+    
+    # Return info about chosen move (Tabu Search related)
+    if get_move_info:
+        return (new_solution, ("swap", product_1.id, new_solution.index(drone_products_1), product_2.id, new_solution.index(drone_products_2)))
 
     return new_solution
 
-def get_random_neighbor_function(solution):
+def get_random_neighbor_function(solution, get_move_info = False):
     function_list = [add_product_to_solution, remove_product_from_solution, swap_products_in_solution]
     choosen_function = random.choice(function_list)
+
+    # Return info about chosen move (Tabu Search related)
+    if get_move_info:
+        return choosen_function(solution, True)
 
     return choosen_function(solution)
 

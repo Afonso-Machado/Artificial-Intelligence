@@ -66,6 +66,11 @@ class Product:
     def set_assigned(self):
         self.assigned = True
 
+    def __lt__(self, other):
+        if self.id == other.id:
+            return self.order_id < other.order_id
+        return self.id < other.id
+
     def __repr__(self):
         return (f"Product {self.id} (belongs_to={self.order_id})")
     
