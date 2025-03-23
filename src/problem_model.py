@@ -1,4 +1,4 @@
-# order.py
+# problem_model.py
 import math
 
 class Order:

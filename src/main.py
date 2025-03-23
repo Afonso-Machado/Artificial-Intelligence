@@ -1,3 +1,4 @@
+# main.py
 from interface import App
 import tkinter as tk
 
