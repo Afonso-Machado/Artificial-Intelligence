@@ -17,39 +17,34 @@ from algorithms.tabu_search import get_ts_solution
 # - Problem Parameters - #
 ##########################
 
+num_rows: int = 0
+num_col: int = 0
 max_turns: int = 0
 warehouse_row: int = 0
 warehouse_col: int = 0
 drone_number: int = 0
 orders: List[Order] = []
+update_callback = None
 
 
 ###########################
 # Interface's entry point #
 ###########################
 
-def run_algorithm(problem: str, algorithm: str) -> str:
+def run_algorithm(algorithm: str) -> str:
     """
-    Parse problem and run selected algorithm
+    Run selected algorithm
     """
-    # Prepare to change problem's parameters
-    global max_turns, warehouse_row, warehouse_col, drone_number, orders
-    
-    # Transform problem string to match file
-    problem = problem.lower().replace(" ", "_")
-
-    # Parse input
-    max_turns, warehouse_row, warehouse_col, drone_number, orders = parse_input_file(f"input/{problem}.in")
 
     # Run algorithm
     if algorithm == "Hill Climbing":
-        return get_hc_solution(10000, generate_random_solution, evaluate_solution, get_random_neighbor_function)
+        return get_hc_solution(10000, generate_random_solution, evaluate_solution, get_random_neighbor_function, update_callback)
     elif algorithm == "Simulated Annealing":
-        return get_sa_solution(10000, 1000, 0.999, generate_random_solution, evaluate_solution, get_random_neighbor_function)
+        return get_sa_solution(10000, 1000, 0.999, generate_random_solution, evaluate_solution, get_random_neighbor_function, update_callback)
     elif algorithm == "Tabu Search":
-        return get_ts_solution(10000, 10, generate_random_solution, evaluate_solution, get_random_neighbor_function)
+        return get_ts_solution(10000, 10, generate_random_solution, evaluate_solution, get_random_neighbor_function, update_callback)
     elif algorithm == "Genetic Algorithms":
-        return get_ga_solution(1000, 30, generate_random_solution, evaluate_solution, order_based_crossover, get_random_neighbor_function)
+        return get_ga_solution(1000, 30, generate_random_solution, evaluate_solution, order_based_crossover, get_random_neighbor_function, update_callback)
     else:
         return f"Unknown algorithm: {algorithm}"
 
@@ -57,6 +52,18 @@ def run_algorithm(problem: str, algorithm: str) -> str:
 #        Simulation        #
 # - Auxiliary  Functions - #
 ############################
+"""---------------------
+- Initializing Problem -
+---------------------"""
+def init_problem_info(problem: str):
+    # Prepare to change problem's parameters
+    global num_rows, num_col, max_turns, warehouse_row, warehouse_col, drone_number, orders
+    
+    # Transform problem string to match file
+    problem = problem.lower().replace(" ", "_")
+
+    # Parse input
+    num_rows, num_col, max_turns, warehouse_row, warehouse_col, drone_number, orders = parse_input_file(f"input/{problem}.in")
 
 """--------------------
 - Solution Generation -
@@ -89,7 +96,7 @@ def generate_random_solution() -> List[List[Product]]:
 """--------------------
 - Evaluation function -
 --------------------"""
-def evaluate_solution(solution: List[List[Product]]) -> int:
+def evaluate_solution(solution: List[List[Product]], return_status: bool = False) -> int:
     # Set every product to "not delivered"
     for order in orders:
         order.clear_deliveries()
@@ -117,6 +124,9 @@ def evaluate_solution(solution: List[List[Product]]) -> int:
     else:
         solution_value = completed_orders * max_turns - turns_taken
 
+    if return_status:
+        order_status = [order.is_completed() for order in orders]
+        return solution_value, order_status
     return solution_value
 
 """--------------------
@@ -393,6 +403,27 @@ def apply_excluded(child, excluded_products):
             child[drone_index].append(product)
 
     return child
+
+"""------------------
+- Interface related -
+------------------"""
+def get_orders_status(solution: List[List[Product]]) -> List[int]:
+    # Set every product to "not delivered"
+    for order in orders:
+        order.clear_deliveries()
+
+    # Mark every delivered product
+    for drone_products in solution:
+        # Marking delivered products
+        for product in drone_products:
+            product.set_delivered()
+
+    return [order.is_completed() for order in orders]
+
+def register_update_callback(callback):
+    """Register a callback function to be called whenever a new best solution is found"""
+    global update_callback
+    update_callback = callback
 
 """-----------------------
 - Problem representation -

@@ -1,11 +1,12 @@
 # genetic_algorithms.py
 import random
+import time
 
 #######################
 # Algorithm Structure #
 #######################
 
-def get_ga_solution(num_iterations, population_size, solution_generator, solution_evaluator, crossover_generator, mutation_generator):
+def get_ga_solution(num_iterations, population_size, solution_generator, solution_evaluator, crossover_generator, mutation_generator, update_visualization):
     # Algorithm Parameters
     generation_no = 0
     num_iterations = num_iterations
@@ -15,10 +16,14 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
     
     # Save the best solution found until the moment
     best_solution = random.choice(population)
-    best_score = solution_evaluator(best_solution)
+    best_score, order_status = solution_evaluator(best_solution, return_status = True)
     best_solution_generation = 0
+
+    if update_visualization:
+        # Pass both solution, score, order status, and is_initial=True
+        update_visualization(best_solution, best_score, order_status, True)
+        time.sleep(1)  # Slightly longer delay to see initial solution
     
-    #print(f"Initial solution: {best_solution}, score: {best_score}")
     print(f"Initial solution score: {best_score}")
     
     while(num_iterations > 0):
@@ -63,24 +68,27 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         replace_least_fittest(population, offspring, solution_evaluator)
 
         # Checking the greatest fit among the current population
-        greatest_fit, greatest_fit_score = get_greatest_fit(population, solution_evaluator)
+        greatest_fit, greatest_fit_score, order_status = get_greatest_fit(population, solution_evaluator)
         if greatest_fit_score > best_score:
             best_solution = greatest_fit
             best_score = greatest_fit_score
             best_solution_generation = generation_no
             num_iterations = num_iterations
-            #print(f"Solution: {best_solution}, score: {best_score}")
-            print(f"Solution score: {best_score}")
+
+            if update_visualization:
+                # Pass solution, score and status to callback
+                update_visualization(best_solution, best_score, order_status)
+                time.sleep(0.1)  # Small delay to see changes
+
+            print(f"Found better solution score: {best_score}")
             print(f"Generation: {generation_no }")
         else:
             num_iterations -= 1
-        
-    #print(f"  Final solution: {best_solution}, score: {best_score}")
+
     print(f"Final solution score: {best_score}")
     print(f"Found on generation {best_solution_generation}")
 
-    #return best_solution
-    return best_score
+    return best_solution
 
 #########################
 # Population Generation #
@@ -102,7 +110,7 @@ def tournament_select(population, tournament_size, solution_evaluator):
 
     participants = random.sample(population, tournament_size)
 
-    best_solution, _best_score = get_greatest_fit(participants, solution_evaluator)
+    best_solution, _best_score, _order_status = get_greatest_fit(participants, solution_evaluator)
     
     return best_solution
 
@@ -137,10 +145,11 @@ def replace_least_fittest(population, offspring, solution_evaluator):
 
 def get_greatest_fit(population, solution_evaluator):
     best_solution = population[0]
-    best_score = solution_evaluator(population[0])
+    best_score, order_status = solution_evaluator(population[0], return_status = True)
     for i in range(1, len(population)):
-        score = solution_evaluator(population[i])
+        score, temp_order_status = solution_evaluator(population[i], return_status = True)
         if score > best_score:
             best_score = score
             best_solution = population[i]
-    return best_solution, best_score
+            order_status = temp_order_status
+    return best_solution, best_score, order_status

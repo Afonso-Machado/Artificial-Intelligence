@@ -6,6 +6,8 @@ def parse_input_file(input_file):
     with open(input_file, 'r') as file:
         # General Info
         values = list(map(int, file.readline().split()))
+        num_row = values[0]
+        num_col = values[1]
         drone_number = values[2]
         max_turns = values[3]
         
@@ -23,7 +25,7 @@ def parse_input_file(input_file):
         # Orders info
         orders = parse_orders(file, warehouse_row, warehouse_col)
     
-    return max_turns, warehouse_row, warehouse_col, drone_number, orders
+    return num_row, num_col, max_turns, warehouse_row, warehouse_col, drone_number, orders
 
 def parse_orders(file, warehouse_row, warehouse_col):
     orders = []

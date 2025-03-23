@@ -1,6 +1,7 @@
 # tabu_search.py
+import time
 
-def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_evaluator, neighbor_generator):
+def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
     # Algorithm Parameters
     iteration = 0
     itNoImp = 0
@@ -8,12 +9,17 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
     
     # Generate initial solution and evaluate it
     current_solution = solution_generator()
-    current_score = solution_evaluator(current_solution)
+    current_score, order_status = solution_evaluator(current_solution, return_status = True)
     
     # Set initial best solution
     best_solution = current_solution
     best_score = current_score
     
+    if update_visualization:
+        # Pass both solution, score, order status, and is_initial=True
+        update_visualization(best_solution, best_score, order_status, True)
+        time.sleep(1)  # Slightly longer delay to see initial solution
+
     # List of tabu moves
     tabu_list = []
 
@@ -34,9 +40,9 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
                 continue
 
             neighbor, move_info = generated_neighbor
-            neighbor_score = solution_evaluator(neighbor)
+            neighbor_score, order_status = solution_evaluator(neighbor, return_status = True)
             is_tabu = move_info in tabu_list
-            neighbors_info.append((neighbor_score, is_tabu, neighbor, move_info))
+            neighbors_info.append((neighbor_score, is_tabu, neighbor, move_info, order_status))
         
         # No valid neighbors generated
         if not neighbors_info:
@@ -49,7 +55,7 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
         neighbors_info.sort()
         
         # Check if best element is not tabu or that it meets the aspiration criteria
-        best_neighbor_score, is_tabu, _neighbor, _move_info = neighbors_info[-1]
+        best_neighbor_score, is_tabu, _neighbor, _move_info, _order_status = neighbors_info[-1]
         if (not is_tabu or best_neighbor_score > best_score):
             picked_neighbor = neighbors_info[-1]
         else:
@@ -71,6 +77,12 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
             best_solution = current_solution
             best_score = current_score
             itNoImp = 0
+
+            if update_visualization:
+                    # Pass solution, score and status to callback
+                    update_visualization(best_solution, best_score, picked_neighbor[4])
+                    time.sleep(0.1)  # Small delay to see changes
+
             print(f"Found better solution score: {best_score}")
         
         # If the move is not tabu then add it to tabu list
@@ -80,5 +92,4 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
             tabu_list.append(picked_neighbor[3])
 
     print(f"Final Solution score: {best_score}")
-    #return best_solution
-    return best_score
+    return best_solution
