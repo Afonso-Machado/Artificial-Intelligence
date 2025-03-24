@@ -10,7 +10,7 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
     # Algorithm Parameters
     generation_no = 0
     num_iterations = num_iterations
-    
+    improvement_counter = 0
     # Generate initial population
     population = generate_population(population_size, solution_generator)
     
@@ -23,6 +23,16 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         # Pass both solution, score, order status, and is_initial=True
         update_visualization(best_solution, best_score, order_status, True)
         time.sleep(1)  # Slightly longer delay to see initial solution
+
+    with open("output.txt", "w") as f:
+        f.write("=" * 60 + "\n")
+        f.write(f"{'GENETIC ALGORITHM RESULTS':^60}\n")
+        f.write("=" * 60 + "\n\n")
+        f.write(f"{'Initial Solution Score:':<30} {best_score:.10f}\n")
+        f.write(f"{'Population Size:':<30} {population_size}\n")
+        f.write(f"{'Mutation Rate:':<30} {'1% chance per child'}\n")
+        f.write(f"{'Max Iterations Without Improvement:':<30} {num_iterations}\n")
+        f.write("-" * 60 + "\n")
     
     print(f"Initial solution score: {best_score}")
     
@@ -41,7 +51,7 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         if child_1 == -1 or child_2 == -1:
             num_iterations -= 1
             continue
-
+        
         # Chance of mutation for child_1
         if random.randint(1, 100) == 1:
             child_1 = mutation_generator(child_1)
@@ -70,6 +80,8 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         # Checking the greatest fit among the current population
         greatest_fit, greatest_fit_score, order_status = get_greatest_fit(population, solution_evaluator)
         if greatest_fit_score > best_score:
+            improvement = greatest_fit_score - best_score
+            improvement_counter += 1
             best_solution = greatest_fit
             best_score = greatest_fit_score
             best_solution_generation = generation_no
@@ -80,10 +92,28 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
                 update_visualization(best_solution, best_score, order_status)
                 time.sleep(0.1)  # Small delay to see changes
 
+
+            with open("output.txt", "a") as f:
+                f.write(f"Generation {generation_no:>5}: New best solution found\n")
+                f.write(f"{'Score:':<30} {best_score:.16f}\n")
+                f.write(f"{'Improvement:':<30} +{improvement:.16f}\n")
+                f.write("-" * 60 + "\n")
+
             print(f"Found better solution score: {best_score}")
             print(f"Generation: {generation_no }")
         else:
             num_iterations -= 1
+
+
+    with open("output.txt", "a") as f:
+        f.write("\n" + "=" * 60 + "\n")
+        f.write(f"{'FINAL RESULTS':^60}\n")
+        f.write("=" * 60 + "\n\n")
+        f.write(f"{'Total Generations:':<30} {generation_no:>16}\n")
+        f.write(f"{'Improvements Found:':<30} {improvement_counter:>16}\n")
+        f.write(f"{'Best Generation:':<30} {best_solution_generation:>16}\n")
+        f.write(f"{'Final Solution Score:':<30} {best_score:>16.10f}\n")
+        f.write("=" * 60 + "\n")
 
     print(f"Final solution score: {best_score}")
     print(f"Found on generation {best_solution_generation}")

@@ -1,0 +1,17 @@
+============================================================
+                 GENETIC ALGORITHM RESULTS                  
+============================================================
+
+Initial Solution Score:        0.9992010691
+Population Size:               30
+Mutation Rate:                 1% chance per child
+Max Iterations Without Improvement: 1000
+------------------------------------------------------------
+Generation     1: New best solution found
+Score:                         0.9992174240882179
+Improvement:                   +0.0000163549954423
+------------------------------------------------------------
+Generation    26: New best solution found
+Score:                         0.9992178064127867
+Improvement:                   +0.0000003823245688
+------------------------------------------------------------
