@@ -1,8 +1,11 @@
 # interface.py
+
+# Built-in libraries
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
+
+# Custom libraries
 import simulation
-import time
 
 class App:
     def __init__(self, root):
@@ -16,7 +19,11 @@ class App:
 
         # Set a minimum window size
         self.root.minsize(900, 700)
-        
+
+        # Create a main frame
+        main_frame = tk.Frame(root)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
         # Create a main frame
         main_frame = tk.Frame(root)
         main_frame.pack(fill=tk.BOTH, expand=True)
@@ -44,19 +51,19 @@ class App:
         # Solve Button
         self.solve_button = tk.Button(control_frame, text="Solve", command=self.solve)
         self.solve_button.grid(row=0, column=4, padx=10)
-        
+
         # Text output area (smaller, at the top)
         text_frame = tk.Frame(main_frame, height=100)
         text_frame.pack(fill=tk.X, padx=10, pady=5)
         text_frame.pack_propagate(False)  # Prevent the frame from resizing to fit content
-        
+
         self.result_area = scrolledtext.ScrolledText(text_frame, wrap=tk.WORD, height=5)
         self.result_area.pack(fill=tk.BOTH, expand=True)
         
         # Separator line
         separator = tk.Frame(main_frame, height=2, bg="gray")
         separator.pack(fill=tk.X, padx=5, pady=5)
-        
+
         # Canvas for visualization (taking most of the window)
         self.canvas_frame = tk.Frame(main_frame, bd=2, relief=tk.SUNKEN)
         self.canvas_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
@@ -67,10 +74,10 @@ class App:
         # Set up visualization properties
         self.cell_size = 20  # Default, will be adjusted based on grid size
         self.margin = 20
-        
+
         # Register update callback with simulation module
         simulation.register_update_callback(self.update_visualization)
-        
+
         # Add zoom controls
         zoom_frame = tk.Frame(main_frame)
         zoom_frame.pack(fill=tk.X, pady=5)
@@ -93,8 +100,6 @@ class App:
         # Zoom factor
         self.zoom_factor = 1.0
 
-
-
     def solve(self):
         problem = self.problem_var.get()
         algorithm = self.algorithm_var.get()
@@ -105,23 +110,24 @@ class App:
             self.result_area.insert(tk.END, f"Solving {problem} using {algorithm}...\n\n")
             self.root.update()
             
-            # Parse input file to set up the problem
-            simulation.parse_input_file(f"input/{problem.lower().replace(' ', '_')}.in")
+            # Initialize problem
+            simulation.init_problem_info(problem)
             
             # Reset zoom for new problem
             self.zoom_factor = 1.0
             self.status_var.set(f"Grid size: {simulation.num_rows}x{simulation.num_col}")
-            
+
             # Initialize visualization
             self.init_visualization()
 
+            # Register update callback with simulation module
             simulation.register_update_callback(self.update_visualization)
 
             # Call the solve function
-            simulation.run_algorithm(algorithm, problem)
+            simulation.run_algorithm(algorithm)
             
             self.result_area.insert(tk.END, f"\n\nOptimization complete!")
-            
+
         except Exception as e:
             self.result_area.insert(tk.END, f"\nError: {e}")
             messagebox.showerror("Error", f"An error occurred: {e}")
@@ -152,7 +158,7 @@ class App:
         else:
             # Just redraw grid if no solution yet
             self.init_visualization()
-        
+
     def init_visualization(self):
         """Initialize the visualization canvas"""
         self.canvas.delete("all")  # Clear canvas
@@ -160,11 +166,10 @@ class App:
         # Calculate cell size based on grid dimensions
         canvas_width = self.canvas.winfo_width() or 800
         canvas_height = self.canvas.winfo_height() or 600
-        
+
         grid_width = simulation.num_col
         grid_height = simulation.num_rows
         
-        # Apply zoom factor
         base_cell_size = min(
             (canvas_width - 2 * self.margin) / grid_width,
             (canvas_height - 2 * self.margin) / grid_height
@@ -226,7 +231,7 @@ class App:
         self.last_score = score
         self.last_order_status = order_status
         self.is_last_initial = is_initial
-        
+
         self.canvas.delete("all")  # Clear canvas
         self.init_visualization()  # Redraw grid
         
@@ -253,7 +258,7 @@ class App:
         w_y = self.margin + simulation.warehouse_row * self.cell_size + self.cell_size/2
         
         warehouse_size = max(self.cell_size * 0.8, 8)  # Don't let it get too small
-        
+
         self.canvas.create_rectangle(
             w_x - warehouse_size/2, w_y - warehouse_size/2,
             w_x + warehouse_size/2, w_y + warehouse_size/2,
@@ -263,7 +268,7 @@ class App:
         # Only add text if cell is large enough
         if self.cell_size >= 15:
             self.canvas.create_text(w_x, w_y, text="W", fill="white")
-        
+
         # Draw orders based on provided completion status
         for i, order in enumerate(simulation.orders):
             o_x = self.margin + order.column * self.cell_size + self.cell_size/2
@@ -273,13 +278,13 @@ class App:
             color = "green" if order_status[i] else "red"
             
             order_size = max(self.cell_size * 0.7, 6)  # Don't let it get too small
-            
+
             self.canvas.create_oval(
                 o_x - order_size/2, o_y - order_size/2,
                 o_x + order_size/2, o_y + order_size/2,
                 fill=color, outline="black", tags=f"order_{i}"
             )
-            
+
             # Only add text if cell is large enough
             if self.cell_size >= 15:
                 self.canvas.create_text(o_x, o_y, text=f"{i}", fill="white")
