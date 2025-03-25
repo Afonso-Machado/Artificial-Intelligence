@@ -24,9 +24,6 @@ class App:
         main_frame = tk.Frame(root)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Create a main frame
-        main_frame = tk.Frame(root)
-        main_frame.pack(fill=tk.BOTH, expand=True)
         
         # Top control frame
         control_frame = tk.Frame(main_frame)
@@ -52,6 +49,46 @@ class App:
         self.solve_button = tk.Button(control_frame, text="Solve", command=self.solve)
         self.solve_button.grid(row=0, column=4, padx=10)
 
+        self.param_frame = tk.LabelFrame(main_frame, text="Algorithm Parameters")
+        self.param_frame.pack(fill=tk.X, padx=10, pady=5)
+
+        # Common parameter (iterations)
+        self.iter_frame = tk.Frame(self.param_frame)
+        self.iter_frame.pack(fill=tk.X, padx=5, pady=5)
+        tk.Label(self.iter_frame, text="Iterations:").pack(side=tk.LEFT, padx=5)
+        self.iterations_var = tk.StringVar(value="10000")
+        tk.Entry(self.iter_frame, textvariable=self.iterations_var, width=10).pack(side=tk.LEFT, padx=5)
+
+        # Hill Climbing parameters (none additional)
+        self.hc_frame = tk.Frame(self.param_frame)
+        # No additional parameters for Hill Climbing
+
+        # Simulated Annealing parameters
+        self.sa_frame = tk.Frame(self.param_frame)
+        tk.Label(self.sa_frame, text="Starting Temperature:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
+        self.sa_temp_var = tk.StringVar(value="1000")
+        tk.Entry(self.sa_frame, textvariable=self.sa_temp_var, width=10).grid(row=0, column=1, padx=5, pady=2)
+
+        tk.Label(self.sa_frame, text="Cooling Factor:").grid(row=1, column=0, padx=5, pady=2, sticky="w")
+        self.sa_cool_var = tk.StringVar(value="0.999")
+        tk.Entry(self.sa_frame, textvariable=self.sa_cool_var, width=10).grid(row=1, column=1, padx=5, pady=2)
+
+        # Tabu Search parameters
+        self.ts_frame = tk.Frame(self.param_frame)
+        tk.Label(self.ts_frame, text="Tabu List Size:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
+        self.ts_tabu_size_var = tk.StringVar(value="10")
+        tk.Entry(self.ts_frame, textvariable=self.ts_tabu_size_var, width=10).grid(row=0, column=1, padx=5, pady=2)
+
+        # Genetic Algorithm parameters
+        self.ga_frame = tk.Frame(self.param_frame)
+        tk.Label(self.ga_frame, text="Population Size:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
+        self.ga_pop_size_var = tk.StringVar(value="30")
+        tk.Entry(self.ga_frame, textvariable=self.ga_pop_size_var, width=10).grid(row=0, column=1, padx=5, pady=2)
+
+        # Register callback when algorithm changes to update parameter display
+        self.algorithm_var.trace_add("write", self.update_param_display)
+        # Initialize parameter display based on default algorithm
+        self.update_param_display()
         # Text output area (smaller, at the top)
         text_frame = tk.Frame(main_frame, height=100)
         text_frame.pack(fill=tk.X, padx=10, pady=5)
@@ -105,9 +142,14 @@ class App:
         algorithm = self.algorithm_var.get()
         
         try:
+        # Validate and get parameters
+            params = self.validate_and_get_params()
+            
             # Clear previous results
             self.result_area.delete(1.0, tk.END)
             self.result_area.insert(tk.END, f"Solving {problem} using {algorithm}...\n\n")
+            # Display the parameters being used
+            self.result_area.insert(tk.END, f"Parameters: {params}\n\n")
             self.root.update()
             
             # Initialize problem
@@ -123,11 +165,14 @@ class App:
             # Register update callback with simulation module
             simulation.register_update_callback(self.update_visualization)
 
-            # Call the solve function
-            simulation.run_algorithm(algorithm)
+            # Call the solve function with validated parameters
+            simulation.run_algorithm(algorithm, **params)
             
             self.result_area.insert(tk.END, f"\n\nOptimization complete!")
-
+            
+        except ValueError as ve:
+            self.result_area.insert(tk.END, f"\nParameter Error: {ve}")
+            messagebox.showerror("Parameter Error", f"Please enter valid parameters: {ve}")
         except Exception as e:
             self.result_area.insert(tk.END, f"\nError: {e}")
             messagebox.showerror("Error", f"An error occurred: {e}")
@@ -296,3 +341,57 @@ class App:
         
         # Force UI update
         self.root.update()
+
+    def validate_and_get_params(self):
+        """Validate parameters and return them as a dictionary"""
+        try:
+            # Common parameters
+            params = {"iterations": int(self.iterations_var.get())}
+            if params["iterations"] <= 0:
+                raise ValueError("Iterations must be greater than 0")
+            
+            # Algorithm-specific parameters
+            algorithm = self.algorithm_var.get()
+            if algorithm == "Simulated Annealing":
+                params["starting_temp"] = float(self.sa_temp_var.get())
+                if params["starting_temp"] <= 0:
+                    raise ValueError("Temperature must be greater than 0")
+                    
+                params["cooling_factor"] = float(self.sa_cool_var.get())
+                if not (0 < params["cooling_factor"] < 1):
+                    raise ValueError("Cooling factor must be between 0 and 1")
+                    
+            elif algorithm == "Tabu Search":
+                params["tabu_size"] = int(self.ts_tabu_size_var.get())
+                if params["tabu_size"] <= 0:
+                    raise ValueError("Tabu list size must be greater than 0")
+                    
+            elif algorithm == "Genetic Algorithms":
+                params["population_size"] = int(self.ga_pop_size_var.get())
+                if params["population_size"] <= 0:
+                    raise ValueError("Population size must be greater than 0")
+                
+            return params
+        
+        except ValueError as e:
+            raise ValueError(f"Invalid parameter: {str(e)}")
+        
+    def update_param_display(self, *args):
+        """Update which parameter controls are displayed based on selected algorithm"""
+        algorithm = self.algorithm_var.get()
+        
+        # Hide all parameter frames
+        self.hc_frame.pack_forget()
+        self.sa_frame.pack_forget()
+        self.ts_frame.pack_forget()
+        self.ga_frame.pack_forget()
+        
+        # Show the appropriate parameter frame
+        if algorithm == "Hill Climbing":
+            self.hc_frame.pack(fill=tk.X, padx=5, pady=5)
+        elif algorithm == "Simulated Annealing":
+            self.sa_frame.pack(fill=tk.X, padx=5, pady=5)
+        elif algorithm == "Tabu Search":
+            self.ts_frame.pack(fill=tk.X, padx=5, pady=5)
+        elif algorithm == "Genetic Algorithms":
+            self.ga_frame.pack(fill=tk.X, padx=5, pady=5)

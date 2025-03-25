@@ -2,16 +2,16 @@
                  GENETIC ALGORITHM RESULTS                  
 ============================================================
 
-Initial Solution Score:        0.9992010691
-Population Size:               30
+Initial Solution Score:        0.9128004602
+Population Size:               10
 Mutation Rate:                 1% chance per child
-Max Iterations Without Improvement: 1000
+Max Iterations Without Improvement: 10000
 ------------------------------------------------------------
 Generation     1: New best solution found
-Score:                         0.9992174240882179
-Improvement:                   +0.0000163549954423
+Score:                         0.9992140114874373
+Improvement:                   +0.0864135512819378
 ------------------------------------------------------------
-Generation    26: New best solution found
-Score:                         0.9992178064127867
-Improvement:                   +0.0000003823245688
+Generation     7: New best solution found
+Score:                         0.9992209782906906
+Improvement:                   +0.0000069668032533
 ------------------------------------------------------------
