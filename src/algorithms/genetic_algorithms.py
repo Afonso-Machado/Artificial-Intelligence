@@ -28,7 +28,7 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         f.write("=" * 60 + "\n")
         f.write(f"{'GENETIC ALGORITHM RESULTS':^60}\n")
         f.write("=" * 60 + "\n\n")
-        f.write(f"{'Initial Solution Score:':<30} {best_score:.10f}\n")
+        f.write(f"{'Initial Solution Score:':<30} {best_score}\n")
         f.write(f"{'Population Size:':<30} {population_size}\n")
         f.write(f"{'Mutation Rate:':<30} {'1% chance per child'}\n")
         f.write(f"{'Max Iterations Without Improvement:':<30} {num_iterations}\n")
@@ -95,12 +95,12 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
 
             with open("output.txt", "a") as f:
                 f.write(f"Generation {generation_no:>5}: New best solution found\n")
-                f.write(f"{'Score:':<30} {best_score:.16f}\n")
-                f.write(f"{'Improvement:':<30} +{improvement:.16f}\n")
+                f.write(f"{'Score:':<30} {best_score}\n")
+                f.write(f"{'Improvement:':<30} +{improvement}\n")
                 f.write("-" * 60 + "\n")
 
             print(f"Found better solution score: {best_score}")
-            print(f"Generation: {generation_no }")
+            print(f"Generation: {generation_no}")
         else:
             num_iterations -= 1
 
@@ -112,7 +112,7 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         f.write(f"{'Total Generations:':<30} {generation_no:>16}\n")
         f.write(f"{'Improvements Found:':<30} {improvement_counter:>16}\n")
         f.write(f"{'Best Generation:':<30} {best_solution_generation:>16}\n")
-        f.write(f"{'Final Solution Score:':<30} {best_score:>16.10f}\n")
+        f.write(f"{'Final Solution Score:':<30} {best_score:>16}\n")
         f.write("=" * 60 + "\n")
 
     print(f"Final solution score: {best_score}")

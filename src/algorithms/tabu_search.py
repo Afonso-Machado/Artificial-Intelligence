@@ -28,7 +28,7 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
         f.write("=" *60 + "\n")
         f.write(f"{'TABU SEARCH ALGORITHM RESULTS':^60}\n")
         f.write("=" * 60 + "\n\n")
-        f.write(f"{'Initial Solution Score:':<30} {best_score:.10f}\n")
+        f.write(f"{'Initial Solution Score:':<30} {best_score}\n")
         f.write(f"{'Tabu List Size:':<30} {tabu_size}\n")
         f.write("-" * 60 + "\n")
 
@@ -99,8 +99,8 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
 
             with open("output.txt", "a") as f:
                 f.write(f"Iteration {iteration:>5}: New better solution found\n")
-                f.write(f"{'Score:':<30} {best_score:.16f}\n")
-                f.write(f"{'Improvement:':<30} +{improvement:.16f}\n")
+                f.write(f"{'Score:':<30} {best_score}\n")
+                f.write(f"{'Improvement:':<30} +{improvement}\n")
                 f.write(f"{'Current tabu list size:':<30} {len(tabu_list)}/{tabu_size}\n")
                 f.write("-" * 60 + "\n")
 
@@ -119,7 +119,7 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
         f.write(f"{'Total Iterations:':<30} {iteration:>16}\n")
         f.write(f"{'Improvements Found:':<30} {improvement_counter:>16}\n")
         f.write(f"{'Final Tabu List Size:':<30} {len(tabu_list):>16}/{tabu_size}\n")
-        f.write(f"{'Final Solution Score:':<30} {best_score:>16.10f}\n")
+        f.write(f"{'Final Solution Score:':<30} {best_score:>16}\n")
         f.write("=" * 60 + "\n")
 
     print(f"Final Solution score: {best_score}")

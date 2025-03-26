@@ -27,9 +27,9 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
         f.write("=" * 60 + "\n")
         f.write(f"{'SIMULATED ANNEALING ALGORITHM RESULTS':^60}\n")
         f.write("=" * 60 + "\n\n")
-        f.write(f"{'Initial Solution Score:':<30} {best_score:.10f}\n")
-        f.write(f"{'Initial Temperature:':<30} {temperature:.4f}\n")
-        f.write(f"{'Cooling Factor:':<30} {cooling_factor:.4f}\n")
+        f.write(f"{'Initial Solution Score:':<30} {best_score}\n")
+        f.write(f"{'Initial Temperature:':<30} {temperature:.2f}\n")
+        f.write(f"{'Cooling Factor:':<30} {cooling_factor}\n")
         f.write("-" * 60 + "\n")
 
     print(f"Initial Solution score: {best_score}")
@@ -50,7 +50,7 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
         neighbor_eval = solution_evaluator(neighbor)
         delta = -(score - neighbor_eval)
 
-        accepted_due_to_temp = (delta <= 0 and np.exp(delta/temperature) > random.random())
+        accepted_due_to_temp = (delta < 0 and np.exp(delta/temperature) > random.random())
 
 
         if (delta > 0 or np.exp(delta/temperature)>random.random()):
@@ -70,9 +70,9 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
                 
                 with open("output.txt", "a") as f:
                     f.write(f"Iteration {iteration:>5}: New better solution found\n")
-                    f.write(f"{'Score:':<30} {best_score:.16f}\n")
-                    f.write(f"{'Improvement:':<30} +{improvement:.16f}\n")
-                    f.write(f"{'Temperature:':<30} {temperature:.8f}\n")
+                    f.write(f"{'Score:':<30} {best_score}\n")
+                    f.write(f"{'Improvement:':<30} +{improvement}\n")
+                    f.write(f"{'Temperature:':<30} {temperature:.2f}\n")
                     f.write("-" * 60 + "\n")
 
                 print(f"Found better solution score: {best_score}")
@@ -80,9 +80,9 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
             elif accepted_due_to_temp:
                     # when a worse solution is accepted due to temperature
                     with open("output.txt", "a") as f:
-                        f.write(f"Iteration {iteration:>5}: Accepted worse solution (temp: {temperature:.8f})\n")
-                        f.write(f"{'Score delta:':<30} {delta:.16f}\n")
-                        f.write(f"{'Acceptance probability:':<30} {np.exp(delta/temperature):.8f}\n")
+                        f.write(f"Iteration {iteration:>5}: Accepted worse solution (temp: {temperature:.2f})\n")
+                        f.write(f"{'Score delta:':<30} {delta}\n")
+                        f.write(f"{'Acceptance probability:':<30} {np.exp(delta/temperature):.4f}\n")
                         f.write("-" * 60 + "\n")
 
     with open("output.txt", "a") as f:
@@ -91,8 +91,8 @@ def get_sa_solution(num_iterations, starting_temp, cooling_factor, solution_gene
         f.write("=" * 60 + "\n\n")
         f.write(f"{'Total Iterations:':<30} {iteration:>16}\n")
         f.write(f"{'Improvements Found:':<30} {improvement_counter:>16}\n")
-        f.write(f"{'Final Temperature:':<30} {temperature:>16.8f}\n")
-        f.write(f"{'Final Solution Score:':<30} {best_score:>16.10f}\n")
+        f.write(f"{'Final Temperature:':<30} {temperature:>16.2f}\n")
+        f.write(f"{'Final Solution Score:':<30} {best_score:>16}\n")
         f.write("=" * 60 + "\n")
                 
     print(f"Final Solution score: {best_score}")

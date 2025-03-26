@@ -143,7 +143,7 @@ def evaluate_solution(solution: List[List[Product]], return_status: bool = False
     if completed_orders == 0:
         solution_value = 0
     else:
-        solution_value = (completed_orders * max_turns - turns_taken) / (len(orders) * max_turns)
+        solution_value = completed_orders * max_turns - turns_taken
 
     if return_status:
         order_status = [order.is_completed() for order in orders]
