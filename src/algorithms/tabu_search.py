@@ -1,11 +1,9 @@
 # tabu_search.py
 import time
 
-def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
-    # Algorithm Parameters
+def get_ts_solution(max_time, tabu_size, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
+    start_time = time.time()    
     iteration = 0
-    itNoImp = 0
-    itNoImpMax = num_iterations/10
     improvement_counter = 0
     
     # Generate initial solution and evaluate it
@@ -35,11 +33,7 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
     print(f"Initial score: {best_score}\n")
     
     # Main loop
-    while iteration < num_iterations and itNoImp < itNoImpMax:
-        # Advance iteration
-        iteration += 1
-        itNoImp += 1
-        
+    while (time.time() - start_time < max_time):        
         # Generate up to 5 neighbors and store relevant information
         neighbors_info = []
         for _ in range(5):
@@ -55,7 +49,10 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
         
         # No valid neighbors generated
         if not neighbors_info:
-            continue  
+            continue
+
+        # Advance iteration (Only for feasible neighbors)
+        iteration += 1
         
         # Neighbor selection
         picked_neighbor = None
@@ -90,7 +87,6 @@ def get_ts_solution(num_iterations, tabu_size, solution_generator, solution_eval
             improvement_counter += 1
             best_solution = current_solution
             best_score = current_score
-            itNoImp = 0
 
             if update_visualization:
                     # Pass solution, score and status to callback

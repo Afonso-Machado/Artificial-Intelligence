@@ -35,34 +35,33 @@ def run_algorithm(algorithm: str, **params) -> str:
     """
     Run selected algorithm with customizable parameters
     """
+    # Get maximum duration parameter
+    max_time = params.get("max_time", 10)
+
     # Run algorithm with provided parameters
     if algorithm == "Hill Climbing":
-        iterations = params.get("iterations", 10000)
-        print(f"Running Hill Climbing with {iterations} iterations")
-        return get_hc_solution(iterations, generate_random_solution, evaluate_solution, 
+        print(f"Running Hill Climbing with a maximum time of {max_time} seconds")
+        return get_hc_solution(max_time, generate_random_solution, evaluate_solution, 
                               get_random_neighbor_function, update_callback)
     
     elif algorithm == "Simulated Annealing":
-        iterations = params.get("iterations", 10000)
-        starting_temp = params.get("starting_temp", 1000)
-        cooling_factor = params.get("cooling_factor", 0.999)
-        print(f"Running Simulated Annealing with {iterations} iterations, starting temperature {starting_temp} and cooling factor {cooling_factor}")
-        return get_sa_solution(iterations, starting_temp, cooling_factor, 
+        starting_temp = 1000
+        cooling_factor = 0.999
+        print(f"Running Simulated Annealing with maximum time of {max_time} seconds, starting temperature {starting_temp} and cooling factor {cooling_factor}")
+        return get_sa_solution(max_time, starting_temp, cooling_factor, 
                              generate_random_solution, evaluate_solution, 
                              get_random_neighbor_function, update_callback)
     
     elif algorithm == "Tabu Search":
-        iterations = params.get("iterations", 10000)
-        tabu_size = params.get("tabu_size", 10)
-        print(f"Running Tabu Search with {iterations} iterations and tabu size {tabu_size}")
-        return get_ts_solution(iterations, tabu_size, generate_random_solution, 
+        tabu_size = 10
+        print(f"Running Tabu Search with maximum time of {max_time} seconds and tabu size {tabu_size}")
+        return get_ts_solution(max_time, tabu_size, generate_random_solution, 
                              evaluate_solution, get_random_neighbor_function, update_callback)
     
     elif algorithm == "Genetic Algorithms":
-        iterations = params.get("iterations", 1000)
-        population_size = params.get("population_size", 30)
-        print(f"Running Genetic Algorithms with {iterations} iterations and population size {population_size}")
-        return get_ga_solution(iterations, population_size, generate_random_solution, 
+        population_size = 30
+        print(f"Running Genetic Algorithms with maximum time of {max_time} seconds and population size {population_size}")
+        return get_ga_solution(max_time, population_size, generate_random_solution, 
                              evaluate_solution, order_based_crossover, 
                              get_random_neighbor_function, update_callback)
     

@@ -6,11 +6,11 @@ import time
 # Algorithm Structure #
 #######################
 
-def get_ga_solution(num_iterations, population_size, solution_generator, solution_evaluator, crossover_generator, mutation_generator, update_visualization):
-    # Algorithm Parameters
+def get_ga_solution(max_time, population_size, solution_generator, solution_evaluator, crossover_generator, mutation_generator, update_visualization):
+    start_time = time.time()
     generation_no = 0
-    num_iterations = num_iterations
     improvement_counter = 0
+
     # Generate initial population
     population = generate_population(population_size, solution_generator)
     
@@ -31,15 +31,11 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         f.write(f"{'Initial Solution Score:':<30} {best_score}\n")
         f.write(f"{'Population Size:':<30} {population_size}\n")
         f.write(f"{'Mutation Rate:':<30} {'1% chance per child'}\n")
-        f.write(f"{'Max Iterations Without Improvement:':<30} {num_iterations}\n")
         f.write("-" * 60 + "\n")
     
     print(f"Initial solution score: {best_score}")
     
-    while(num_iterations > 0):
-        # Advance iteration            
-        generation_no += 1
-        
+    while (time.time() - start_time < max_time):
         # Selected parents for crossover
         tournment_winner_sol = tournament_select(population, 4, solution_evaluator)
         roulette_winner_sol = roulette_select(population, solution_evaluator)
@@ -49,7 +45,6 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
 
         # Check if croosover was successful
         if child_1 == -1 or child_2 == -1:
-            num_iterations -= 1
             continue
         
         # Chance of mutation for child_1
@@ -62,8 +57,10 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
         
         # Check if mutation was successful
         if child_1 == -1 or child_2 == -1:
-            num_iterations -= 1
             continue
+
+        # Advance iteration (Only if children solutions are feasible)
+        generation_no += 1
 
         # Pick best offspring
         score_1 = solution_evaluator(child_1)
@@ -85,13 +82,11 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
             best_solution = greatest_fit
             best_score = greatest_fit_score
             best_solution_generation = generation_no
-            num_iterations = num_iterations
 
             if update_visualization:
                 # Pass solution, score and status to callback
                 update_visualization(best_solution, best_score, order_status)
                 time.sleep(0.1)  # Small delay to see changes
-
 
             with open("output.txt", "a") as f:
                 f.write(f"Generation {generation_no:>5}: New best solution found\n")
@@ -101,9 +96,6 @@ def get_ga_solution(num_iterations, population_size, solution_generator, solutio
 
             print(f"Found better solution score: {best_score}")
             print(f"Generation: {generation_no}")
-        else:
-            num_iterations -= 1
-
 
     with open("output.txt", "a") as f:
         f.write("\n" + "=" * 60 + "\n")

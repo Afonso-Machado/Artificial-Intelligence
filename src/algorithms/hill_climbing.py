@@ -2,11 +2,10 @@
 
 import time
 
-def get_hc_solution(num_iterations, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
-    # Algorithm Parameters
+def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
+    start_time = time.time()
+    improvement_counter = 0
     iteration = 0
-    itNoImp = 0
-    itNoImpMax = num_iterations/10
 
     # Get initial solution and its score
     best_solution = solution_generator()
@@ -26,13 +25,8 @@ def get_hc_solution(num_iterations, solution_generator, solution_evaluator, neig
         f.write("-" * 60 + "\n")
 
     print(f"Initial Solution score: {best_score}")
-    improvement_counter = 0
 
-    while iteration < num_iterations and itNoImp < itNoImpMax:
-        # Advance Iteration
-        iteration += 1
-        itNoImp += 1
-
+    while (time.time() - start_time < max_time):
         # Generate Neighbor
         neighbor = neighbor_generator(best_solution)
 
@@ -40,13 +34,15 @@ def get_hc_solution(num_iterations, solution_generator, solution_evaluator, neig
         if(neighbor == -1):
             continue
 
+        # Advance Iteration (Only for feasible solutions)
+        iteration += 1
+
         neighbor_eval, order_status = solution_evaluator(neighbor, return_status = True)
 
         if (neighbor_eval > best_score):
             improvement = neighbor_eval - best_score
             best_score = neighbor_eval
             best_solution = neighbor
-            itNoImp = 0
             improvement_counter += 1
 
             if update_visualization:

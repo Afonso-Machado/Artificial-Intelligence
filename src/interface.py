@@ -52,12 +52,12 @@ class App:
         self.param_frame = tk.LabelFrame(main_frame, text="Algorithm Parameters")
         self.param_frame.pack(fill=tk.X, padx=10, pady=5)
 
-        # Common parameter (iterations)
+        # Common parameter (Max duration)
         self.iter_frame = tk.Frame(self.param_frame)
         self.iter_frame.pack(fill=tk.X, padx=5, pady=5)
-        tk.Label(self.iter_frame, text="Iterations:").pack(side=tk.LEFT, padx=5)
-        self.iterations_var = tk.StringVar(value="10000")
-        tk.Entry(self.iter_frame, textvariable=self.iterations_var, width=10).pack(side=tk.LEFT, padx=5)
+        tk.Label(self.iter_frame, text="Maximum duration (in seconds):").pack(side=tk.LEFT, padx=5)
+        self.max_duration_var = tk.StringVar(value="10")
+        tk.Entry(self.iter_frame, textvariable=self.max_duration_var, width=10).pack(side=tk.LEFT, padx=5)
 
         # Hill Climbing parameters (none additional)
         self.hc_frame = tk.Frame(self.param_frame)
@@ -346,9 +346,9 @@ class App:
         """Validate parameters and return them as a dictionary"""
         try:
             # Common parameters
-            params = {"iterations": int(self.iterations_var.get())}
-            if params["iterations"] <= 0:
-                raise ValueError("Iterations must be greater than 0")
+            params = {"max_time": int(self.max_duration_var.get())}
+            if params["max_time"] <= 0:
+                raise ValueError("Max duration must be greater than 0")
             
             # Algorithm-specific parameters
             algorithm = self.algorithm_var.get()
