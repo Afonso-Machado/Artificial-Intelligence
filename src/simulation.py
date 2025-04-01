@@ -174,6 +174,12 @@ def check_if_feasible(solution: List[List[Product]]) -> bool:
 -       Functions        -
 -----------------------"""
 def add_product_to_solution(solution: List[List[Product]], get_move_info: bool = False) -> List[List[Product]]:
+    """
+    This neighboor function picks a random drone from a solution, checks which items are not being delivered and randomly assings one of them to the drone.
+    This function returns a new solution with the added product or it returns -1 if:
+    - There are no products not being delivered
+    - Picked product can not be added to the picked drone's workload (adding it would make the solution unfeasible)
+    """
     # Make a shallow copy of the given solution
     new_solution = [drone_products.copy() for drone_products in solution]
 
@@ -216,6 +222,11 @@ def add_product_to_solution(solution: List[List[Product]], get_move_info: bool =
     return new_solution
 
 def remove_product_from_solution(solution: List[List[Product]], get_move_info: bool = False) -> Union[List[List[Product]], int]:
+    """
+    This neighboor function picks a random drone from a solution and removes one of the products it is responsible for delivering.
+    This function returns a new solution with the removed product or it returns -1 if:
+    - The picked drone has no products to remove
+    """
     # Make a shallow copy of the given solution
     new_solution = [drone_products.copy() for drone_products in solution]
 
@@ -239,6 +250,13 @@ def remove_product_from_solution(solution: List[List[Product]], get_move_info: b
     return new_solution
 
 def swap_products_in_solution(solution: List[List[Product]], get_move_info: bool = False) -> List[List[Product]]:
+    """
+    This neighboor function picks two random drone from a solution and swaps two randomly picked items between them.
+    This function returns a new solution with the swapped products or it returns -1 if:
+    - The problem instance doens't have more than one drone
+    - If any of the randomly picked drones doesn't have products
+    - If the swap would make any drone's workload be infeasible
+    """
     # Check if there are more than 1 drone
     if drone_number <= 1:
         return -1
@@ -362,6 +380,13 @@ def order_based_crossover(parent1, parent2):
     return child1, child2
 
 def order_based_crossover_2(parent1, parent2):
+    """
+    Crossover Logic: Start with empty children, child1 will pick a drone from parent 1, then a drone from parent 2 and so on, until it has picked all the drones.
+    However, with this approach dupplicated products are a problem. Therefore, after picking a parent's drone, the child will remove all the items from it that are duplicated.
+    This way no child solution will have duplicated products, however, to avoid culling products from the parent soltuions the erased items are stored.
+    At the end of the algorithm, removed products are added to the drone with the least workload in the other child.
+    This ensures that child solutions have all the products from the parents and that no child solution has duplicated products.
+    """
     # Make shallow copy of solution 1 and shuffle it
     parent1_aux = parent1.copy()
     random.shuffle(parent1_aux)
