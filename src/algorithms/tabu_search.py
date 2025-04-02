@@ -13,11 +13,11 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
     # Problem Size approximates the maximum number of possible neighbor moves
     problem_size = product_number * drone_number + product_number//2 * product_number//2
     if tabu_adjustment==0:
-        tabu_size = math.ceil(0.05 * problem_size)
+        tabu_size = math.ceil(0.00001 * problem_size)
     elif tabu_adjustment==1:
-        tabu_size = math.ceil(0.10 * problem_size)
+        tabu_size = math.ceil(0.00005 * problem_size)
     elif tabu_adjustment==2:
-        tabu_size = math.ceil(0.20 * problem_size)
+        tabu_size = math.ceil(0.00010 * problem_size)
     
     # Generate initial solution and evaluate it
     current_solution = solution_generator()

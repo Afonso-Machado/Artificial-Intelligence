@@ -38,8 +38,9 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
         f.write("-" * 60 + "\n")
 
     print(f"Initial Solution score: {best_score}")
-    
-    while (time.time() - start_time < max_time):        
+
+    curr_time = time.time()
+    while (curr_time - start_time < max_time):        
         # Generate neighbor
         neighbor = neighbor_generator(solution)
         
@@ -48,7 +49,7 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
             continue
 
         # Advance iteration (Only for feasible solutions)
-        temperature = cooling_schedule(temp_adjustment, max_time,start_time)
+        temperature = cooling_schedule(temp_adjustment, max_time, start_time, curr_time)
         iteration += 1
 
         neighbor_eval,order_status = solution_evaluator(neighbor, return_status = True)
@@ -86,6 +87,9 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
                         f.write(f"{'Score delta:':<30} {delta}\n")
                         f.write(f"{'Acceptance probability:':<30} {np.exp(delta/temperature):.4f}\n")
                         f.write("-" * 60 + "\n")
+        
+        # Update time for next loop
+        curr_time = time.time()
 
     with open("output.txt", "a") as f:
         f.write("\n" + "=" * 60 + "\n")
@@ -100,13 +104,13 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
     print(f"Final Solution score: {best_score}")
     return best_solution
 
-def cooling_schedule(temp_adjustment, max_time, start_time):
+def cooling_schedule(temp_adjustment, max_time, start_time, curr_time):
     # Temp_adjustment = 0 -> Constant cooling
     if (temp_adjustment == 0):
         return 1000
     # Temp_adjustment = 1 -> Linear cooling
     if (temp_adjustment == 1):
-        return 1000 * (1 - ((time.time() - start_time) / max_time))
+        return 1000 * (1 - ((curr_time - start_time) / max_time))
     # Temp_adjustment = 2 -> Logaritmic cooling
     if (temp_adjustment == 2):
-        return ((1000 / (time.time() - start_time)) - (1000 / max_time))
+        return ((1000 / (curr_time - start_time)) - (1000 / max_time))
