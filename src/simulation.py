@@ -60,7 +60,7 @@ def run_algorithm(algorithm: str, **params) -> str:
         pop_adjustment = params.get("pop_adjustment", 0)
         print(f"Running Genetic Algorithms with max time {max_time} and population adjustment {pop_adjustment}")
         return get_ga_solution(max_time, pop_adjustment, generate_random_solution, evaluate_solution, 
-                                order_based_crossover, get_random_neighbor_function, update_callback)
+                                random_crosover_function, get_random_neighbor_function, update_callback)
     
     else:
         return f"Unknown algorithm: {algorithm}"
@@ -445,6 +445,12 @@ def apply_excluded(child, excluded_products):
             child[drone_index].append(product)
 
     return child
+
+def random_crosover_function(parent1, parent2):
+    crossover_functions = [order_based_crossover, order_based_crossover_2]
+    choosen_croosover = random.choice(crossover_functions)
+
+    return choosen_croosover(parent1, parent2)
 
 """------------------
 - Interface related -
