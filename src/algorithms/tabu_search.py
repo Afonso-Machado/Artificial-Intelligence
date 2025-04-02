@@ -17,7 +17,6 @@ def get_ts_solution(max_time, tabu_size, solution_generator, solution_evaluator,
     if update_visualization:
         # Pass both solution, score, order status, and is_initial=True
         update_visualization(best_solution, best_score, order_status, True)
-        time.sleep(1)  # Slightly longer delay to see initial solution
 
     # List of tabu moves
     tabu_list = []
@@ -91,7 +90,6 @@ def get_ts_solution(max_time, tabu_size, solution_generator, solution_evaluator,
             if update_visualization:
                     # Pass solution, score and status to callback
                     update_visualization(best_solution, best_score, picked_neighbor[4])
-                    time.sleep(0.1)  # Small delay to see changes
 
             with open("output.txt", "a") as f:
                 f.write(f"Iteration {iteration:>5}: New better solution found\n")
