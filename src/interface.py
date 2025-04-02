@@ -65,25 +65,21 @@ class App:
 
         # Simulated Annealing parameters
         self.sa_frame = tk.Frame(self.param_frame)
-        tk.Label(self.sa_frame, text="Starting Temperature:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
-        self.sa_temp_var = tk.StringVar(value="1000")
-        tk.Entry(self.sa_frame, textvariable=self.sa_temp_var, width=10).grid(row=0, column=1, padx=5, pady=2)
-
-        tk.Label(self.sa_frame, text="Cooling Factor:").grid(row=1, column=0, padx=5, pady=2, sticky="w")
-        self.sa_cool_var = tk.StringVar(value="0.999")
-        tk.Entry(self.sa_frame, textvariable=self.sa_cool_var, width=10).grid(row=1, column=1, padx=5, pady=2)
+        tk.Label(self.sa_frame, text="Starting Temperature Adjustment:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
+        self.sa_temp_adjustment_var = tk.StringVar(value="Constant")
+        tk.OptionMenu(self.sa_frame, self.sa_temp_adjustment_var, "Constant", "Linear", "Logarithmic").grid(row=0, column=1, padx=5, pady=2)
 
         # Tabu Search parameters
         self.ts_frame = tk.Frame(self.param_frame)
         tk.Label(self.ts_frame, text="Tabu List Size:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
-        self.ts_tabu_size_var = tk.StringVar(value="10")
-        tk.Entry(self.ts_frame, textvariable=self.ts_tabu_size_var, width=10).grid(row=0, column=1, padx=5, pady=2)
+        self.ts_tabu_adjustment_var = tk.StringVar(value="Small")
+        tk.OptionMenu(self.ts_frame, self.ts_tabu_adjustment_var, "Small", "Medium", "Large").grid(row=0, column=1, padx=5, pady=2)
 
         # Genetic Algorithm parameters
         self.ga_frame = tk.Frame(self.param_frame)
         tk.Label(self.ga_frame, text="Population Size:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
-        self.ga_pop_size_var = tk.StringVar(value="30")
-        tk.Entry(self.ga_frame, textvariable=self.ga_pop_size_var, width=10).grid(row=0, column=1, padx=5, pady=2)
+        self.ga_pop_adjustment_var = tk.StringVar(value="Small")
+        tk.OptionMenu(self.ga_frame, self.ga_pop_adjustment_var, "Small", "Medium", "Large").grid(row=0, column=1, padx=5, pady=2)
 
         # Register callback when algorithm changes to update parameter display
         self.algorithm_var.trace_add("write", self.update_param_display)
@@ -353,23 +349,16 @@ class App:
             # Algorithm-specific parameters
             algorithm = self.algorithm_var.get()
             if algorithm == "Simulated Annealing":
-                params["starting_temp"] = float(self.sa_temp_var.get())
-                if params["starting_temp"] <= 0:
-                    raise ValueError("Temperature must be greater than 0")
-                    
-                params["cooling_factor"] = float(self.sa_cool_var.get())
-                if not (0 < params["cooling_factor"] < 1):
-                    raise ValueError("Cooling factor must be between 0 and 1")
-                    
+                adjustment_type = self.sa_temp_adjustment_var.get()
+                params["temp_adjustment"] = {"Constant": 0, "Linear": 1, "Logarithmic": 2}[adjustment_type]
+                
             elif algorithm == "Tabu Search":
-                params["tabu_size"] = int(self.ts_tabu_size_var.get())
-                if params["tabu_size"] <= 0:
-                    raise ValueError("Tabu list size must be greater than 0")
-                    
+                    adjustment_type = self.ts_tabu_adjustment_var.get()
+                    params["tabu_adjustment"] = {"Small": 0, "Medium": 1, "Large": 2}[adjustment_type]
+
             elif algorithm == "Genetic Algorithms":
-                params["population_size"] = int(self.ga_pop_size_var.get())
-                if params["population_size"] <= 0:
-                    raise ValueError("Population size must be greater than 0")
+                    adjustment_type = self.ga_pop_adjustment_var.get()
+                    params["pop_adjustment"] = {"Small": 0, "Medium": 1, "Large": 2}[adjustment_type]
                 
             return params
         

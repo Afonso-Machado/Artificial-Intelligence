@@ -1,10 +1,17 @@
 # tabu_search.py
 import time
 
-def get_ts_solution(max_time, tabu_size, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
+def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
     start_time = time.time()    
     iteration = 0
     improvement_counter = 0
+    tabu_size = 10
+    if tabu_adjustment==0:
+        tabu_size = 5
+    elif tabu_adjustment==1:
+        tabu_size = 10
+    elif tabu_adjustment==2:
+        tabu_size = 20
     
     # Generate initial solution and evaluate it
     current_solution = solution_generator()

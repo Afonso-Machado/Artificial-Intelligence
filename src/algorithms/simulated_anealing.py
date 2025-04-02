@@ -3,12 +3,19 @@ import numpy as np
 import random
 import time
 
-def get_sa_solution(max_time, starting_temp, cooling_factor, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
+def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
     start_time = time.time()
     iteration = 0
     improvement_counter = 0
-    temperature = starting_temp
-
+    temperature = 1000
+    cooling_factor_string = ""
+    if temp_adjustment == 0:
+        cooling_factor_string = "Constant"
+    elif temp_adjustment == 1:
+        cooling_factor_string = "Linear"
+    elif temp_adjustment == 2:
+        cooling_factor_string = "Logarithmic"
+    
     # Get initial solution and its score
     solution = solution_generator() 
     score, order_status = solution_evaluator(solution, return_status = True)
@@ -27,7 +34,7 @@ def get_sa_solution(max_time, starting_temp, cooling_factor, solution_generator,
         f.write("=" * 60 + "\n\n")
         f.write(f"{'Initial Solution Score:':<30} {best_score}\n")
         f.write(f"{'Initial Temperature:':<30} {temperature:.2f}\n")
-        f.write(f"{'Cooling Factor:':<30} {cooling_factor}\n")
+        f.write(f"{'Cooling Factor:':<30} {cooling_factor_string}\n")
         f.write("-" * 60 + "\n")
 
     print(f"Initial Solution score: {best_score}")
@@ -41,17 +48,18 @@ def get_sa_solution(max_time, starting_temp, cooling_factor, solution_generator,
             continue
 
         # Advance iteration (Only for feasible solutions)
-        temperature = temperature * cooling_factor
+        temperature = cooling_schedule(temp_adjustment, max_time,start_time)
         iteration += 1
 
-        neighbor_eval = solution_evaluator(neighbor)
+        neighbor_eval,order_status = solution_evaluator(neighbor, return_status = True)
         delta = -(score - neighbor_eval)
 
-        accepted_due_to_temp = (delta < 0 and np.exp(delta/temperature) > random.random())
+        
+        accepted_due_to_temp = (delta < 0 and np.exp(delta/temperature) > random.random()) # Accept worse solution
 
-        if (delta > 0 or np.exp(delta/temperature)>random.random()):
+        if (delta > 0 or accepted_due_to_temp):
             solution = neighbor
-            score, order_status = solution_evaluator(solution, return_status = True)
+            score = neighbor_eval
             if score > best_score:
                 improvement = score - best_score
                 improvement_counter += 1
@@ -63,7 +71,7 @@ def get_sa_solution(max_time, starting_temp, cooling_factor, solution_generator,
                     update_visualization(best_solution, best_score, order_status)
                 
                 with open("output.txt", "a") as f:
-                    f.write(f"Iteration {iteration:>5}: New better solution found\n")
+                    f.write(f"Iteration {iteration:>5}: New better solution found (temp: {temperature:.2f})\n")
                     f.write(f"{'Score:':<30} {best_score}\n")
                     f.write(f"{'Improvement:':<30} +{improvement}\n")
                     f.write(f"{'Temperature:':<30} {temperature:.2f}\n")
@@ -91,3 +99,14 @@ def get_sa_solution(max_time, starting_temp, cooling_factor, solution_generator,
                 
     print(f"Final Solution score: {best_score}")
     return best_solution
+
+def cooling_schedule(temp_adjustment, max_time, start_time):
+    # Temp_adjustment = 0 -> Constant cooling
+    if (temp_adjustment == 0):
+        return 1000
+    # Temp_adjustment = 1 -> Linear cooling
+    if (temp_adjustment == 1):
+        return 1000 * (1 - ((time.time() - start_time) / max_time))
+    # Temp_adjustment = 2 -> Logaritmic cooling
+    if (temp_adjustment == 2):
+        return ((1000 / (time.time() - start_time)) - (1000 / max_time))

@@ -6,10 +6,17 @@ import time
 # Algorithm Structure #
 #######################
 
-def get_ga_solution(max_time, population_size, solution_generator, solution_evaluator, crossover_generator, mutation_generator, update_visualization):
+def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evaluator, crossover_generator, mutation_generator, update_visualization):
     start_time = time.time()
     generation_no = 0
     improvement_counter = 0
+    population_size = 30
+    if pop_adjustment==0:
+        population_size = 20
+    elif pop_adjustment==1:
+        population_size = 30
+    elif pop_adjustment==2:
+        population_size = 50
 
     # Generate initial population
     population = generate_population(population_size, solution_generator)

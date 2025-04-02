@@ -45,25 +45,22 @@ def run_algorithm(algorithm: str, **params) -> str:
                               get_random_neighbor_function, update_callback)
     
     elif algorithm == "Simulated Annealing":
-        starting_temp = 1000
-        cooling_factor = 0.999
-        print(f"Running Simulated Annealing with maximum time of {max_time} seconds, starting temperature {starting_temp} and cooling factor {cooling_factor}")
-        return get_sa_solution(max_time, starting_temp, cooling_factor, 
-                             generate_random_solution, evaluate_solution, 
-                             get_random_neighbor_function, update_callback)
+        temp_adjustment = params.get("temp_adjustment", 0)
+        print(f"Running Simulated Annealing with max time {max_time} and temp adjustment {temp_adjustment}")
+        return get_sa_solution(max_time, temp_adjustment, generate_random_solution, evaluate_solution, 
+                                get_random_neighbor_function, update_callback)
     
     elif algorithm == "Tabu Search":
-        tabu_size = 10
-        print(f"Running Tabu Search with maximum time of {max_time} seconds and tabu size {tabu_size}")
-        return get_ts_solution(max_time, tabu_size, generate_random_solution, 
-                             evaluate_solution, get_random_neighbor_function, update_callback)
+        tabu_adjustment = params.get("tabu_adjustment", 0)
+        print(f"Running Tabu Search with max time {max_time} and tabu adjustment {tabu_adjustment}")
+        return get_ts_solution(max_time, tabu_adjustment, generate_random_solution, evaluate_solution, 
+                                get_random_neighbor_function, update_callback)
     
     elif algorithm == "Genetic Algorithms":
-        population_size = 30
-        print(f"Running Genetic Algorithms with maximum time of {max_time} seconds and population size {population_size}")
-        return get_ga_solution(max_time, population_size, generate_random_solution, 
-                             evaluate_solution, order_based_crossover, 
-                             get_random_neighbor_function, update_callback)
+        pop_adjustment = params.get("pop_adjustment", 0)
+        print(f"Running Genetic Algorithms with max time {max_time} and population adjustment {pop_adjustment}")
+        return get_ga_solution(max_time, pop_adjustment, generate_random_solution, evaluate_solution, 
+                                order_based_crossover, get_random_neighbor_function, update_callback)
     
     else:
         return f"Unknown algorithm: {algorithm}"
