@@ -54,7 +54,7 @@ def run_algorithm(algorithm: str, **params) -> str:
         tabu_adjustment = params.get("tabu_adjustment", 0)
         print(f"Running Tabu Search with max time {max_time} and tabu adjustment {tabu_adjustment}")
         return get_ts_solution(max_time, tabu_adjustment, generate_random_solution, evaluate_solution, 
-                                get_random_neighbor_function, update_callback)
+                                get_random_neighbor_function, update_callback, drone_number, orders)
     
     elif algorithm == "Genetic Algorithms":
         pop_adjustment = params.get("pop_adjustment", 0)
