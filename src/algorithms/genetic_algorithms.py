@@ -22,9 +22,12 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
     population = generate_population(population_size, solution_generator)
     
     # Save the best solution found until the moment
-    best_solution = random.choice(population)
-    best_score, order_status = solution_evaluator(best_solution, return_status = True)
+    best_solution, best_score, order_status = get_greatest_fit(population, solution_evaluator)
     best_solution_generation = 0
+
+    # Data for graph generation
+    map_res = map(solution_evaluator, population)
+    data = [[0], [best_score], [], []]
 
     if update_visualization:
         # Pass both solution, score, order status, and is_initial=True
@@ -41,7 +44,8 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
     
     print(f"Initial solution score: {best_score}")
     
-    while (time.time() - start_time < max_time):
+    curr_time = time.time()
+    while (curr_time - start_time < max_time):
         # Selected parents for crossover
         tournment_winner_sol = tournament_select(population, 4, solution_evaluator)
         roulette_winner_sol = roulette_select(population, solution_evaluator)
@@ -78,7 +82,10 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
             offspring = child_2
 
         # Modify population
-        replace_least_fittest(population, offspring, solution_evaluator)
+        curr_avg = replace_least_fittest(population, offspring, solution_evaluator)
+
+        data[2].append(curr_time - start_time)
+        data[3].append(curr_avg)
 
         # Checking the greatest fit among the current population
         greatest_fit, greatest_fit_score, order_status = get_greatest_fit(population, solution_evaluator)
@@ -88,6 +95,9 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
             best_solution = greatest_fit
             best_score = greatest_fit_score
             best_solution_generation = generation_no
+
+            data[0].append(curr_time - start_time)
+            data[1].append(best_score)
 
             if update_visualization:
                 # Pass solution, score and status to callback
@@ -101,6 +111,11 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
 
             print(f"Found better solution score: {best_score}")
             print(f"Generation: {generation_no}")
+        
+        curr_time = time.time()
+
+    data[0].append(max_time)
+    data[1].append(best_score)
 
     with open("output.txt", "a") as f:
         f.write("\n" + "=" * 60 + "\n")
@@ -115,7 +130,7 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
     print(f"Final solution score: {best_score}")
     print(f"Found on generation {best_solution_generation}")
 
-    return best_solution
+    return data, best_solution
 
 #########################
 # Population Generation #
@@ -159,12 +174,16 @@ def roulette_select(population, solution_evaluator):
 def replace_least_fittest(population, offspring, solution_evaluator):
     least_fittest_index = 0
     least_fittest_value = solution_evaluator(population[0])
+    sum = 0
     for i in range(1, len(population)):
         score = solution_evaluator(population[i])
+        sum += score
         if score < least_fittest_value:
             least_fittest_value = score
             least_fittest_index = i
     population[least_fittest_index] = offspring
+
+    return sum / len(population)
 
 #######################
 # Auxiliary Functions #

@@ -8,6 +8,7 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
     iteration = 0
     improvement_counter = 0
     temperature = 1000
+
     cooling_factor_string = ""
     if temp_adjustment == 0:
         cooling_factor_string = "Constant"
@@ -23,6 +24,9 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
     # Save the best solution found until the moment
     best_solution = solution
     best_score = score
+
+    # Data for graph generation
+    data = [[0], [best_score], [], [], [], []]
 
     if update_visualization:
         # Pass both solution, score, order status, and is_initial=True
@@ -51,6 +55,9 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
         # Advance iteration (Only for feasible solutions)
         temperature = cooling_schedule(temp_adjustment, max_time, start_time, curr_time)
         iteration += 1
+        
+        data[4].append(curr_time - start_time)
+        data[5].append(temperature)
 
         neighbor_eval,order_status = solution_evaluator(neighbor, return_status = True)
         delta = -(score - neighbor_eval)
@@ -61,6 +68,14 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
         if (delta > 0 or accepted_due_to_temp):
             solution = neighbor
             score = neighbor_eval
+
+            data[0].append(curr_time - start_time)
+            data[1].append(score)
+
+            if accepted_due_to_temp:
+                data[2].append(curr_time - start_time)
+                data[3].append(score)
+
             if score > best_score:
                 improvement = score - best_score
                 improvement_counter += 1
@@ -91,6 +106,9 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
         # Update time for next loop
         curr_time = time.time()
 
+    data[0].append(max_time)
+    data[1].append(best_score)
+
     with open("output.txt", "a") as f:
         f.write("\n" + "=" * 60 + "\n")
         f.write(f"{'FINAL RESULTS':^60}\n")
@@ -102,15 +120,17 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
         f.write("=" * 60 + "\n")
                 
     print(f"Final Solution score: {best_score}")
-    return best_solution
+    return data
 
 def cooling_schedule(temp_adjustment, max_time, start_time, curr_time):
     # Temp_adjustment = 0 -> Constant cooling
     if (temp_adjustment == 0):
-        return 1000
+        return 500
     # Temp_adjustment = 1 -> Linear cooling
     if (temp_adjustment == 1):
         return 1000 * (1 - ((curr_time - start_time) / max_time))
     # Temp_adjustment = 2 -> Logaritmic cooling
     if (temp_adjustment == 2):
-        return ((1000 / (curr_time - start_time)) - (1000 / max_time))
+        elapsed_time = curr_time - start_time
+        temperature = (1000 / (1 + elapsed_time)) - (1000 / max_time)
+        return max(temperature, 0.0001)

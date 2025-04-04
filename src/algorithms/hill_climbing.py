@@ -11,6 +11,9 @@ def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_g
     best_solution = solution_generator()
     best_score, order_status = solution_evaluator(best_solution, return_status = True)
 
+    # Data for graph generation
+    data = [[0], [best_score]]
+
     if update_visualization:
         # Pass both solution, score, order status, and is_initial=True
         update_visualization(best_solution, best_score, order_status, True)
@@ -25,7 +28,8 @@ def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_g
 
     print(f"Initial Solution score: {best_score}")
 
-    while (time.time() - start_time < max_time):
+    curr_time = time.time()
+    while (curr_time - start_time < max_time):
         # Generate Neighbor
         neighbor = neighbor_generator(best_solution)
 
@@ -44,6 +48,9 @@ def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_g
             best_solution = neighbor
             improvement_counter += 1
 
+            data[0].append(curr_time - start_time)
+            data[1].append(neighbor_eval)
+
             if update_visualization:
                 # Pass solution, score and status to callback
                 update_visualization(best_solution, best_score, order_status)
@@ -55,6 +62,11 @@ def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_g
                 f.write("-" * 60 + "\n")
 
             print(f"Found better solution score: {best_score}")
+        
+        curr_time = time.time()
+    
+    data[0].append(max_time)
+    data[1].append(best_score)
 
     # Write final results
     with open("output.txt", "a") as f:
@@ -67,4 +79,4 @@ def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_g
         f.write("=" * 60 + "\n")
 
     print(f"Final Solution score: {best_score}")
-    return best_solution
+    return data

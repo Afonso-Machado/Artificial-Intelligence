@@ -13,11 +13,11 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
     # Problem Size approximates the maximum number of possible neighbor moves
     problem_size = product_number * drone_number + product_number//2 * product_number//2
     if tabu_adjustment==0:
-        tabu_size = math.ceil(0.00001 * problem_size)
-    elif tabu_adjustment==1:
         tabu_size = math.ceil(0.00005 * problem_size)
+    elif tabu_adjustment==1:
+        tabu_size = math.ceil(0.00025 * problem_size)
     elif tabu_adjustment==2:
-        tabu_size = math.ceil(0.00010 * problem_size)
+        tabu_size = math.ceil(0.00050 * problem_size)
     
     # Generate initial solution and evaluate it
     current_solution = solution_generator()
@@ -27,6 +27,9 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
     best_solution = current_solution
     best_score = current_score
     
+    # Data for graph generation
+    data = [[0], [best_score], [], []]
+
     if update_visualization:
         # Pass both solution, score, order status, and is_initial=True
         update_visualization(best_solution, best_score, order_status, True)
@@ -45,7 +48,8 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
     print(f"Initial score: {best_score}\n")
     
     # Main loop
-    while (time.time() - start_time < max_time):        
+    curr_time = time.time()
+    while (curr_time - start_time < max_time):        
         # Generate up to 5 neighbors and store relevant information
         neighbors_info = []
         for _ in range(5):
@@ -75,6 +79,10 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
         # Check if best element is not tabu or that it meets the aspiration criteria
         best_neighbor_score, is_tabu, _neighbor, _move_info, _order_status = neighbors_info[-1]
 
+        if (is_tabu):
+            data[2].append(curr_time - start_time)
+            data[3].append(best_neighbor_score)
+
         if (not is_tabu or best_neighbor_score > best_score):
             picked_neighbor = neighbors_info[-1]
 
@@ -100,9 +108,12 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
             best_solution = current_solution
             best_score = current_score
 
+            data[0].append(curr_time - start_time)
+            data[1].append(best_score)
+
             if update_visualization:
-                    # Pass solution, score and status to callback
-                    update_visualization(best_solution, best_score, picked_neighbor[4])
+                # Pass solution, score and status to callback
+                update_visualization(best_solution, best_score, picked_neighbor[4])
 
             with open("output.txt", "a") as f:
                 f.write(f"Iteration {iteration:>5}: New better solution found\n")
@@ -118,6 +129,11 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
             if (len(tabu_list) == tabu_size):
                 tabu_list.pop(0)
             tabu_list.append(picked_neighbor[3])
+        
+        curr_time = time.time()
+    
+    data[0].append(max_time)
+    data[1].append(best_score)
 
     with open("output.txt", "a") as f:
         f.write("\n" + "=" * 60 + "\n")
@@ -130,4 +146,4 @@ def get_ts_solution(max_time, tabu_adjustment, solution_generator, solution_eval
         f.write("=" * 60 + "\n")
 
     print(f"Final Solution score: {best_score}")
-    return best_solution
+    return data

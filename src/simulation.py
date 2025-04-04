@@ -31,7 +31,7 @@ update_callback = None
 # Interface's entry point #
 ###########################
 
-def run_algorithm(algorithm: str, **params) -> str:
+def run_algorithm(algorithm: str, **params):
     """
     Run selected algorithm with customizable parameters
     """
@@ -59,8 +59,11 @@ def run_algorithm(algorithm: str, **params) -> str:
     elif algorithm == "Genetic Algorithms":
         pop_adjustment = params.get("pop_adjustment", 0)
         print(f"Running Genetic Algorithms with max time {max_time} and population adjustment {pop_adjustment}")
-        return get_ga_solution(max_time, pop_adjustment, generate_random_solution, evaluate_solution, 
+        data, solution = get_ga_solution(max_time, pop_adjustment, generate_random_solution, evaluate_solution, 
                                 random_crosover_function, get_random_neighbor_function, update_callback)
+        
+        print("Is is valid? " + str(check_if_feasible(solution)))
+        return data
     
     else:
         return f"Unknown algorithm: {algorithm}"

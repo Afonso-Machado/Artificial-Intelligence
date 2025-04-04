@@ -3,6 +3,9 @@
 # Built-in libraries
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from matplotlib.ticker import ScalarFormatter
 
 # Custom libraries
 import simulation
@@ -66,7 +69,7 @@ class App:
         # Simulated Annealing parameters
         self.sa_frame = tk.Frame(self.param_frame)
         tk.Label(self.sa_frame, text="Starting Temperature Adjustment:").grid(row=0, column=0, padx=5, pady=2, sticky="w")
-        self.sa_temp_adjustment_var = tk.StringVar(value="Constant")
+        self.sa_temp_adjustment_var = tk.StringVar(value="Logarithmic")
         tk.OptionMenu(self.sa_frame, self.sa_temp_adjustment_var, "Constant", "Linear", "Logarithmic").grid(row=0, column=1, padx=5, pady=2)
 
         # Tabu Search parameters
@@ -97,34 +100,45 @@ class App:
         separator = tk.Frame(main_frame, height=2, bg="gray")
         separator.pack(fill=tk.X, padx=5, pady=5)
 
-        # Canvas for visualization (taking most of the window)
-        self.canvas_frame = tk.Frame(main_frame, bd=2, relief=tk.SUNKEN)
-        self.canvas_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
-        
+        # Create a frame to hold the grid and graph side by side
+        visualization_frame = tk.Frame(main_frame)
+        visualization_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+
+        # Canvas for visualization (grid)
+        self.canvas_frame = tk.Frame(visualization_frame, bd=2, relief=tk.SUNKEN)
+        self.canvas_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
         self.canvas = tk.Canvas(self.canvas_frame, bg="white")
         self.canvas.pack(fill=tk.BOTH, expand=True)
-        
+
         # Set up visualization properties
-        self.cell_size = 20  # Default, will be adjusted based on grid size
         self.margin = 20
 
-        # Register update callback with simulation module
-        simulation.register_update_callback(self.update_visualization)
+        # Frame for the graph (to the right of the canvas)
+        self.graph_frame = tk.Frame(visualization_frame, bd=2, relief=tk.SUNKEN)
+        self.graph_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # Add zoom controls
+        # Create a matplotlib figure and canvas (initially empty)
+        self.figure = Figure(figsize=(5, 4), dpi=100)
+        self.ax = self.figure.add_subplot(111)
+        self.ax2 = None
+        self.canvas_graph = FigureCanvasTkAgg(self.figure, self.graph_frame)
+        self.canvas_graph.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+        # Add zoom controls below the visualization
         zoom_frame = tk.Frame(main_frame)
         zoom_frame.pack(fill=tk.X, pady=5)
-        
+
         self.zoom_in_btn = tk.Button(zoom_frame, text="Zoom In (+)", command=self.zoom_in)
         self.zoom_in_btn.pack(side=tk.LEFT, padx=10)
-        
+
         self.zoom_out_btn = tk.Button(zoom_frame, text="Zoom Out (-)", command=self.zoom_out)
         self.zoom_out_btn.pack(side=tk.LEFT, padx=10)
-        
+
         self.reset_zoom_btn = tk.Button(zoom_frame, text="Reset Zoom", command=self.reset_zoom)
         self.reset_zoom_btn.pack(side=tk.LEFT, padx=10)
-        
-        # Add status bar
+
+        # Add status bar at the bottom
         self.status_var = tk.StringVar()
         self.status_bar = tk.Label(main_frame, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
@@ -138,16 +152,20 @@ class App:
         algorithm = self.algorithm_var.get()
         
         try:
-        # Validate and get parameters
+            # Validate and get parameters
             params = self.validate_and_get_params()
             
             # Clear previous results
             self.result_area.delete(1.0, tk.END)
             self.result_area.insert(tk.END, f"Solving {problem} using {algorithm}...\n\n")
+            
             # Display the parameters being used
             self.result_area.insert(tk.END, f"Parameters: {params}\n\n")
             self.root.update()
             
+            # Clear the graph before starting a new computation
+            self.clear_graph()
+
             # Initialize problem
             simulation.init_problem_info(problem)
             
@@ -162,9 +180,12 @@ class App:
             simulation.register_update_callback(self.update_visualization)
 
             # Call the solve function with validated parameters
-            simulation.run_algorithm(algorithm, **params)
+            recorded_data = simulation.run_algorithm(algorithm, **params)
             
             self.result_area.insert(tk.END, f"\n\nOptimization complete!")
+
+            # Update the graph with the results
+            self.update_graph(recorded_data, algorithm)
             
         except ValueError as ve:
             self.result_area.insert(tk.END, f"\nParameter Error: {ve}")
@@ -384,3 +405,110 @@ class App:
             self.ts_frame.pack(fill=tk.X, padx=5, pady=5)
         elif algorithm == "Genetic Algorithms":
             self.ga_frame.pack(fill=tk.X, padx=5, pady=5)
+    
+    def clear_graph(self):
+        """Clear the graph."""
+        self.ax.clear()
+        self.ax.tick_params(axis="y", labelcolor="black")
+        if self.ax2:
+            self.ax2.remove()
+            self.ax2 = None
+        self.canvas_graph.draw()
+    
+    def update_graph(self, data, algorithm):
+        """Update the graph with new data."""
+        self.ax.clear()
+        if self.ax2:
+            self.ax2.remove()
+            self.ax2 = None
+
+        if algorithm == "Hill Climbing":
+            # Retrive data
+            x_data = data[0]
+            y_data = data[1]
+
+            # Set up labels and plot graph
+            self.ax.set_title("Score Improvement Over Time")
+            self.ax.set_xlabel("Time (s)")
+            self.ax.set_ylabel("Score")
+            self.ax.plot(x_data, y_data, label="Score")
+            # Use scientific notation for the y-axis
+            self.ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            self.ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+        
+        if algorithm == "Tabu Search":
+            # Retrive data
+            x_data = data[0]
+            y_data = data[1]
+            x_tabu = data[2]
+            y_tabu = data[3]
+
+            # Set up labels and plot graph
+            self.ax.set_title("Score Improvement Over Time")
+            self.ax.set_xlabel("Time (s)")
+            self.ax.set_ylabel("Score")
+            self.ax.plot(x_data, y_data, label="Score")
+            self.ax.scatter(x_tabu, y_tabu, label="Tabu Hits", color="red", s=20)
+            # Use scientific notation for the y-axis
+            self.ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            self.ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+        
+        if algorithm == "Simulated Annealing":
+            # Retrive data
+            x_data = data[0]
+            y_data = data[1]
+            x_worse = data[2]
+            y_worse = data[3]
+            x_temp = data[4]
+            y_temp = data[5]
+
+            # Set up labels and plot graph
+            self.ax.set_title("Algorithm Results Over Time")
+            self.ax.set_xlabel("Time (s)")
+            
+            # Plot score on the primary y-axis
+            self.ax.set_ylabel("Score", color="blue")
+            self.ax.plot(x_data, y_data, label="Score", color="blue")
+            self.ax.tick_params(axis="y", labelcolor="blue")
+
+            # Create a secondary y-axis for temperature
+            self.ax2 = self.ax.twinx()
+            self.ax2.set_ylabel("Temperature", color="orange")
+            self.ax2.plot(x_temp, y_temp, label="Temperature", color="orange")
+            self.ax2.tick_params(axis="y", labelcolor="orange")
+
+            # Plot accepted worse solutions as scatter points on the primary axis
+            self.ax.scatter(x_worse, y_worse, label="Accepted Worse", color="red", s=5)
+
+            # Add legends for both axes
+            self.ax.legend(loc="upper left")
+            self.ax2.legend(loc="upper right")
+
+            # Use scientific notation for the primary y-axis (score)
+            self.ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            self.ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+
+            # Redraw the graph
+            self.canvas_graph.draw()
+        
+        if algorithm == "Genetic Algorithms":
+            # Retrive data
+            x_data = data[0]
+            y_data = data[1]
+            x_avg = data[2]
+            y_avg = data[3]
+
+            # Set up labels and plot graph
+            self.ax.set_title("Score Improvement Over Time")
+            self.ax.set_xlabel("Time (s)")
+            self.ax.set_ylabel("Score")
+            self.ax.plot(x_data, y_data, label="Best Score")
+            self.ax.plot(x_avg, y_avg, label="Average Score")
+
+            # Use scientific notation for the y-axis
+            self.ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            self.ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0))
+
+        # Add legend and redraw the graph
+        self.ax.legend()
+        self.canvas_graph.draw()
