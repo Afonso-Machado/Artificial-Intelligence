@@ -23,10 +23,9 @@ Before you begin, ensure you have the following installed:
 
 ### Step-by-Step Installation
 
-1. **Clone the Repository**:
+1. **Move into src folder**:
     ```bash
-    git clone git@github.com:Afonso-Machado-202207611/drone-delivery.git
-    cd drone-delivery
+    cd src/
     ```
 
 2. **Create a Virtual Environment** (Optional but recommended):
@@ -37,11 +36,11 @@ Before you begin, ensure you have the following installed:
 3. **Activate the Virtual Environment**:
    - On Windows:
      ```bash
-     .\venv\Scripts\activate
+     .\.venv\Scripts\activate
      ```
    - On macOS/Linux:
      ```bash
-     source venv/bin/activate
+     source .venv/bin/activate
      ```
 
 4. **Install Dependencies**:
@@ -53,7 +52,7 @@ Before you begin, ensure you have the following installed:
     - `tkinter` (for the GUI)
     - `numpy` (for numerical computations)
     - `matplotlib` (for visualizations)
-    - Any other libraries used in the project.
+    - And their dependencies.
 
 5. **Running the Application**:
     After the installation, run the main program to launch the application:
