@@ -26,8 +26,7 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
     best_solution_generation = 0
 
     # Data for graph generation
-    map_res = map(solution_evaluator, population)
-    data = [[0], [best_score], [], []]
+    data = [[0], [best_score], [0], [get_average(population, solution_evaluator)]]
 
     if update_visualization:
         # Pass both solution, score, order status, and is_initial=True
@@ -82,10 +81,10 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
             offspring = child_2
 
         # Modify population
-        curr_avg = replace_least_fittest(population, offspring, solution_evaluator)
+        replace_least_fittest(population, offspring, solution_evaluator)
 
         data[2].append(curr_time - start_time)
-        data[3].append(curr_avg)
+        data[3].append(get_average(population, solution_evaluator))
 
         # Checking the greatest fit among the current population
         greatest_fit, greatest_fit_score, order_status = get_greatest_fit(population, solution_evaluator)
@@ -127,10 +126,35 @@ def get_ga_solution(max_time, pop_adjustment, solution_generator, solution_evalu
         f.write(f"{'Final Solution Score:':<30} {best_score:>16}\n")
         f.write("=" * 60 + "\n")
 
+    # Save solution to file
+    with open("solution.txt", "w") as f:
+        f.write("=" * 60 + "\n")
+        f.write(f"{'SOLUTION DETAILS':^60}\n")
+        f.write("=" * 60 + "\n\n")
+
+        for drone_id, drone_products in enumerate(best_solution):
+            # Write drone details
+            f.write(f"Drone {drone_id + 1}:\n")
+            f.write(f"{'Products:':<15}")
+
+            # Wrap the product list into chunks of a fixed size
+            chunk_size = 1
+            for i in range(0, len(drone_products), chunk_size):
+                chunk = drone_products[i:i + chunk_size]
+                if i > 0:
+                    f.write(f"{'':<15}")  # Indent subsequent lines
+                f.write(f"{', '.join(map(str, chunk))}\n")
+
+            f.write("-" * 60 + "\n")
+
+        f.write("\n" + "=" * 60 + "\n")
+        f.write(f"{'END OF SOLUTION':^60}\n")
+        f.write("=" * 60 + "\n")
+
     print(f"Final solution score: {best_score}")
     print(f"Found on generation {best_solution_generation}")
 
-    return data, best_solution
+    return data
 
 #########################
 # Population Generation #
@@ -174,16 +198,12 @@ def roulette_select(population, solution_evaluator):
 def replace_least_fittest(population, offspring, solution_evaluator):
     least_fittest_index = 0
     least_fittest_value = solution_evaluator(population[0])
-    sum = 0
     for i in range(1, len(population)):
         score = solution_evaluator(population[i])
-        sum += score
         if score < least_fittest_value:
             least_fittest_value = score
             least_fittest_index = i
     population[least_fittest_index] = offspring
-
-    return sum / len(population)
 
 #######################
 # Auxiliary Functions #
@@ -199,3 +219,9 @@ def get_greatest_fit(population, solution_evaluator):
             best_solution = population[i]
             order_status = temp_order_status
     return best_solution, best_score, order_status
+
+def get_average(population, solution_evaluator):
+    total = 0
+    for i in range(len(population)):
+        total += solution_evaluator(population[i])
+    return total / len(population)

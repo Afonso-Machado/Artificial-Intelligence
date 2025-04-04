@@ -118,6 +118,31 @@ def get_sa_solution(max_time, temp_adjustment, solution_generator, solution_eval
         f.write(f"{'Final Temperature:':<30} {temperature:>16.2f}\n")
         f.write(f"{'Final Solution Score:':<30} {best_score:>16}\n")
         f.write("=" * 60 + "\n")
+
+    # Save solution to file
+    with open("solution.txt", "w") as f:
+        f.write("=" * 60 + "\n")
+        f.write(f"{'SOLUTION DETAILS':^60}\n")
+        f.write("=" * 60 + "\n\n")
+
+        for drone_id, drone_products in enumerate(best_solution):
+            # Write drone details
+            f.write(f"Drone {drone_id + 1}:\n")
+            f.write(f"{'Products:':<15}")
+
+            # Wrap the product list into chunks of a fixed size
+            chunk_size = 1
+            for i in range(0, len(drone_products), chunk_size):
+                chunk = drone_products[i:i + chunk_size]
+                if i > 0:
+                    f.write(f"{'':<15}")  # Indent subsequent lines
+                f.write(f"{', '.join(map(str, chunk))}\n")
+
+            f.write("-" * 60 + "\n")
+
+        f.write("\n" + "=" * 60 + "\n")
+        f.write(f"{'END OF SOLUTION':^60}\n")
+        f.write("=" * 60 + "\n")
                 
     print(f"Final Solution score: {best_score}")
     return data
@@ -132,5 +157,5 @@ def cooling_schedule(temp_adjustment, max_time, start_time, curr_time):
     # Temp_adjustment = 2 -> Logaritmic cooling
     if (temp_adjustment == 2):
         elapsed_time = curr_time - start_time
-        temperature = (1000 / (1 + elapsed_time)) - (1000 / max_time)
+        temperature = (1000 / (max_time*0.1 + elapsed_time)) - (1000 / max_time)
         return max(temperature, 0.0001)

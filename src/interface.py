@@ -482,7 +482,7 @@ class App:
 
             # Add legends for both axes
             self.ax.legend(loc="upper left")
-            self.ax2.legend(loc="upper right")
+            self.ax2.legend(loc="center right")
 
             # Use scientific notation for the primary y-axis (score)
             self.ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))

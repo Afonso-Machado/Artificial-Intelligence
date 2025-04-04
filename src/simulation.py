@@ -59,11 +59,8 @@ def run_algorithm(algorithm: str, **params):
     elif algorithm == "Genetic Algorithms":
         pop_adjustment = params.get("pop_adjustment", 0)
         print(f"Running Genetic Algorithms with max time {max_time} and population adjustment {pop_adjustment}")
-        data, solution = get_ga_solution(max_time, pop_adjustment, generate_random_solution, evaluate_solution, 
-                                random_crosover_function, get_random_neighbor_function, update_callback)
-        
-        print("Is is valid? " + str(check_if_feasible(solution)))
-        return data
+        return get_ga_solution(max_time, pop_adjustment, generate_random_solution, evaluate_solution, 
+                                order_based_crossover, get_random_neighbor_function, update_callback)
     
     else:
         return f"Unknown algorithm: {algorithm}"
@@ -309,77 +306,6 @@ def get_random_neighbor_function(solution, get_move_info = False):
 - Crossover Functions -
 --------------------"""
 def order_based_crossover(parent1, parent2):
-    # Make shallow copy of parents
-    p1 = parent1.copy()
-    p2 = parent2.copy()
-
-    # If either parent is empty, return originals
-    if not p1 or not p2:
-        return -1, -1
-    
-    # Step 1: Flatten both parents into single lists of items
-    p1_flat = []
-    for drone in p1:
-        p1_flat.extend(drone)
-    
-    p2_flat = []
-    for drone in p2:
-        p2_flat.extend(drone)
-    
-    # If either flattened list is empty, return originals
-    if not p1_flat or not p2_flat:
-        return p1, p2
-    
-    # Step 2: Perform crossover on the flattened lists
-    # Create child 1: Take a random segment from parent 1, fill rest from parent 2
-    cut1 = random.randint(0, len(p1_flat) - 1)
-    cut2 = random.randint(cut1, len(p1_flat))
-    
-    # Get middle segment from parent 1
-    middle_segment = p1_flat[cut1:cut2]
-    
-    # Fill rest with items from parent 2 that aren't in middle segment
-    remaining_items = [item for item in p2_flat if item not in middle_segment]
-    
-    # Create child 1's flat representation
-    child1_flat = remaining_items[:cut1] + middle_segment + remaining_items[cut1:]
-    # Create child 2: Reverse the process
-    cut1_p2 = random.randint(0, len(p2_flat) - 1)
-    cut2_p2 = random.randint(cut1_p2, len(p2_flat))
-    
-    # Get middle segment from parent 2
-    middle_segment_p2 = p2_flat[cut1_p2:cut2_p2]
-    
-    # Fill rest with items from parent 1 that aren't in middle segment
-    remaining_items_p2 = [item for item in p1_flat if item not in middle_segment_p2]
-    
-    # Create child 2's flat representation
-    child2_flat = remaining_items_p2[:cut1_p2] + middle_segment_p2 + remaining_items_p2[cut1_p2:]
-    # Step 3: Redistribute items to drones using round-robin
-    num_drones = max(len(p1), len(p2))
-    
-    # Create empty drone lists for each child
-    child1 = [[] for _ in range(num_drones)]
-    child2 = [[] for _ in range(num_drones)]
-    
-    # Distribute items for child 1
-    drone_idx = 0
-    for item in child1_flat:
-        child1[drone_idx].append(item)
-        drone_idx = (drone_idx + 1) % num_drones
-    
-    # Distribute items for child 2
-    drone_idx = 0
-    for item in child2_flat:
-        child2[drone_idx].append(item)
-        drone_idx = (drone_idx + 1) % num_drones
-
-    if(child1 == child2) :
-        return -1, -1
-    
-    return child1, child2
-
-def order_based_crossover_2(parent1, parent2):
     """
     Crossover Logic: Start with empty children, child1 will pick a drone from parent 1, then a drone from parent 2 and so on, until it has picked all the drones.
     However, with this approach dupplicated products are a problem. Therefore, after picking a parent's drone, the child will remove all the items from it that are duplicated.
@@ -446,14 +372,9 @@ def apply_excluded(child, excluded_products):
         # If possible, assign current product to it
         if (drone_cost + orders[product.order_id].delivery_cost <= max_turns):
             child[drone_index].append(product)
+            drones_cost[drone_index] += orders[product.order_id].delivery_cost
 
     return child
-
-def random_crosover_function(parent1, parent2):
-    crossover_functions = [order_based_crossover, order_based_crossover_2]
-    choosen_croosover = random.choice(crossover_functions)
-
-    return choosen_croosover(parent1, parent2)
 
 """------------------
 - Interface related -

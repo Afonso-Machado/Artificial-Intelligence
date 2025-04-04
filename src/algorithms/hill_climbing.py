@@ -1,5 +1,4 @@
 # hill_climbing.py
-
 import time
 
 def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_generator, update_visualization):
@@ -76,6 +75,31 @@ def get_hc_solution(max_time, solution_generator, solution_evaluator, neighbor_g
         f.write(f"{'Total Iterations:':<30} {iteration:>16}\n")
         f.write(f"{'Improvements Found:':<30} {improvement_counter:>16}\n")
         f.write(f"{'Final Solution Score:':<30} {best_score:>16}\n")
+        f.write("=" * 60 + "\n")
+
+    # Save solution to file
+    with open("solution.txt", "w") as f:
+        f.write("=" * 60 + "\n")
+        f.write(f"{'SOLUTION DETAILS':^60}\n")
+        f.write("=" * 60 + "\n\n")
+
+        for drone_id, drone_products in enumerate(best_solution):
+            # Write drone details
+            f.write(f"Drone {drone_id + 1}:\n")
+            f.write(f"{'Products:':<15}")
+
+            # Wrap the product list into chunks of a fixed size
+            chunk_size = 1
+            for i in range(0, len(drone_products), chunk_size):
+                chunk = drone_products[i:i + chunk_size]
+                if i > 0:
+                    f.write(f"{'':<15}")  # Indent subsequent lines
+                f.write(f"{', '.join(map(str, chunk))}\n")
+
+            f.write("-" * 60 + "\n")
+
+        f.write("\n" + "=" * 60 + "\n")
+        f.write(f"{'END OF SOLUTION':^60}\n")
         f.write("=" * 60 + "\n")
 
     print(f"Final Solution score: {best_score}")
