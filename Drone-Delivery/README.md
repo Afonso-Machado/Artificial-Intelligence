@@ -64,7 +64,7 @@ Before you begin, ensure you have the following installed:
 
 ## Interface Usage
 
-![Image showing the interface with tips](/images/interface.png "Interface")
+![Image showing the interface with tips](./images/interface.png "Interface")
 
 ### Tooltip Explanation
 
