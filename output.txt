@@ -1,0 +1,749 @@
+============================================================
+           SIMULATED ANNEALING ALGORITHM RESULTS            
+============================================================
+
+Initial Solution Score:        127795086
+Initial Temperature:           1000.00
+Cooling Factor:                0.999
+------------------------------------------------------------
+Iteration     6: New better solution found
+Score:                         127908079
+Improvement:                   +112993
+Temperature:                   994.01
+------------------------------------------------------------
+Iteration     8: New better solution found
+Score:                         128021072
+Improvement:                   +112993
+Temperature:                   992.03
+------------------------------------------------------------
+Iteration    11: New better solution found
+Score:                         128134065
+Improvement:                   +112993
+Temperature:                   989.05
+------------------------------------------------------------
+Iteration    19: New better solution found
+Score:                         128247058
+Improvement:                   +112993
+Temperature:                   981.17
+------------------------------------------------------------
+Iteration    21: New better solution found
+Score:                         128360051
+Improvement:                   +112993
+Temperature:                   979.21
+------------------------------------------------------------
+Iteration    35: New better solution found
+Score:                         128473044
+Improvement:                   +112993
+Temperature:                   965.59
+------------------------------------------------------------
+Iteration    39: New better solution found
+Score:                         128586037
+Improvement:                   +112993
+Temperature:                   961.73
+------------------------------------------------------------
+Iteration    42: New better solution found
+Score:                         128699030
+Improvement:                   +112993
+Temperature:                   958.85
+------------------------------------------------------------
+Iteration    43: New better solution found
+Score:                         128812023
+Improvement:                   +112993
+Temperature:                   957.89
+------------------------------------------------------------
+Iteration    47: New better solution found
+Score:                         128925016
+Improvement:                   +112993
+Temperature:                   954.06
+------------------------------------------------------------
+Iteration    48: New better solution found
+Score:                         129038009
+Improvement:                   +112993
+Temperature:                   953.11
+------------------------------------------------------------
+Iteration    52: New better solution found
+Score:                         129151002
+Improvement:                   +112993
+Temperature:                   949.30
+------------------------------------------------------------
+Iteration    57: New better solution found
+Score:                         129263995
+Improvement:                   +112993
+Temperature:                   944.57
+------------------------------------------------------------
+Iteration    60: New better solution found
+Score:                         129376988
+Improvement:                   +112993
+Temperature:                   941.74
+------------------------------------------------------------
+Iteration    66: New better solution found
+Score:                         129489981
+Improvement:                   +112993
+Temperature:                   936.10
+------------------------------------------------------------
+Iteration    83: New better solution found
+Score:                         129602974
+Improvement:                   +112993
+Temperature:                   920.31
+------------------------------------------------------------
+Iteration    85: New better solution found
+Score:                         129715967
+Improvement:                   +112993
+Temperature:                   918.47
+------------------------------------------------------------
+Iteration    89: New better solution found
+Score:                         129828960
+Improvement:                   +112993
+Temperature:                   914.80
+------------------------------------------------------------
+Iteration    91: New better solution found
+Score:                         129941953
+Improvement:                   +112993
+Temperature:                   912.98
+------------------------------------------------------------
+Iteration   103: New better solution found
+Score:                         130054946
+Improvement:                   +112993
+Temperature:                   902.08
+------------------------------------------------------------
+Iteration   105: New better solution found
+Score:                         130167939
+Improvement:                   +112993
+Temperature:                   900.28
+------------------------------------------------------------
+Iteration   107: New better solution found
+Score:                         130280932
+Improvement:                   +112993
+Temperature:                   898.48
+------------------------------------------------------------
+Iteration   114: New better solution found
+Score:                         130393925
+Improvement:                   +112993
+Temperature:                   892.21
+------------------------------------------------------------
+Iteration   119: New better solution found
+Score:                         130506918
+Improvement:                   +112993
+Temperature:                   887.75
+------------------------------------------------------------
+Iteration   121: New better solution found
+Score:                         130619911
+Improvement:                   +112993
+Temperature:                   885.98
+------------------------------------------------------------
+Iteration   131: New better solution found
+Score:                         130732904
+Improvement:                   +112993
+Temperature:                   877.16
+------------------------------------------------------------
+Iteration   132: New better solution found
+Score:                         130845897
+Improvement:                   +112993
+Temperature:                   876.28
+------------------------------------------------------------
+Iteration   136: New better solution found
+Score:                         130958890
+Improvement:                   +112993
+Temperature:                   872.78
+------------------------------------------------------------
+Iteration   138: New better solution found
+Score:                         131071883
+Improvement:                   +112993
+Temperature:                   871.04
+------------------------------------------------------------
+Iteration   140: New better solution found
+Score:                         131184876
+Improvement:                   +112993
+Temperature:                   869.30
+------------------------------------------------------------
+Iteration   146: New better solution found
+Score:                         131297869
+Improvement:                   +112993
+Temperature:                   864.09
+------------------------------------------------------------
+Iteration   148: New better solution found
+Score:                         131410862
+Improvement:                   +112993
+Temperature:                   862.37
+------------------------------------------------------------
+Iteration   150: New better solution found
+Score:                         131523855
+Improvement:                   +112993
+Temperature:                   860.64
+------------------------------------------------------------
+Iteration   154: New better solution found
+Score:                         131636848
+Improvement:                   +112993
+Temperature:                   857.21
+------------------------------------------------------------
+Iteration   156: New better solution found
+Score:                         131749841
+Improvement:                   +112993
+Temperature:                   855.49
+------------------------------------------------------------
+Iteration   160: New better solution found
+Score:                         131862834
+Improvement:                   +112993
+Temperature:                   852.08
+------------------------------------------------------------
+Iteration   163: New better solution found
+Score:                         131975827
+Improvement:                   +112993
+Temperature:                   849.52
+------------------------------------------------------------
+Iteration   167: New better solution found
+Score:                         132088820
+Improvement:                   +112993
+Temperature:                   846.13
+------------------------------------------------------------
+Iteration   168: New better solution found
+Score:                         132201813
+Improvement:                   +112993
+Temperature:                   845.28
+------------------------------------------------------------
+Iteration   178: New better solution found
+Score:                         132314806
+Improvement:                   +112993
+Temperature:                   836.87
+------------------------------------------------------------
+Iteration   181: New better solution found
+Score:                         132427799
+Improvement:                   +112993
+Temperature:                   834.36
+------------------------------------------------------------
+Iteration   183: New better solution found
+Score:                         132540792
+Improvement:                   +112993
+Temperature:                   832.69
+------------------------------------------------------------
+Iteration   185: New better solution found
+Score:                         132653785
+Improvement:                   +112993
+Temperature:                   831.03
+------------------------------------------------------------
+Iteration   186: New better solution found
+Score:                         132766778
+Improvement:                   +112993
+Temperature:                   830.20
+------------------------------------------------------------
+Iteration   190: New better solution found
+Score:                         132879771
+Improvement:                   +112993
+Temperature:                   826.88
+------------------------------------------------------------
+Iteration   191: New better solution found
+Score:                         132992764
+Improvement:                   +112993
+Temperature:                   826.05
+------------------------------------------------------------
+Iteration   197: New better solution found
+Score:                         133105757
+Improvement:                   +112993
+Temperature:                   821.11
+------------------------------------------------------------
+Iteration   201: New better solution found
+Score:                         133218750
+Improvement:                   +112993
+Temperature:                   817.83
+------------------------------------------------------------
+Iteration   202: New better solution found
+Score:                         133331743
+Improvement:                   +112993
+Temperature:                   817.01
+------------------------------------------------------------
+Iteration   203: New better solution found
+Score:                         133444736
+Improvement:                   +112993
+Temperature:                   816.20
+------------------------------------------------------------
+Iteration   205: New better solution found
+Score:                         133557729
+Improvement:                   +112993
+Temperature:                   814.56
+------------------------------------------------------------
+Iteration   207: New better solution found
+Score:                         133670722
+Improvement:                   +112993
+Temperature:                   812.94
+------------------------------------------------------------
+Iteration   210: New better solution found
+Score:                         133783715
+Improvement:                   +112993
+Temperature:                   810.50
+------------------------------------------------------------
+Iteration   216: New better solution found
+Score:                         133896708
+Improvement:                   +112993
+Temperature:                   805.65
+------------------------------------------------------------
+Iteration   226: New better solution found
+Score:                         134009701
+Improvement:                   +112993
+Temperature:                   797.63
+------------------------------------------------------------
+Iteration   229: New better solution found
+Score:                         134122694
+Improvement:                   +112993
+Temperature:                   795.24
+------------------------------------------------------------
+Iteration   236: New better solution found
+Score:                         134235687
+Improvement:                   +112993
+Temperature:                   789.69
+------------------------------------------------------------
+Iteration   240: New better solution found
+Score:                         134348680
+Improvement:                   +112993
+Temperature:                   786.53
+------------------------------------------------------------
+Iteration   245: New better solution found
+Score:                         134461673
+Improvement:                   +112993
+Temperature:                   782.61
+------------------------------------------------------------
+Iteration   250: New better solution found
+Score:                         134574666
+Improvement:                   +112993
+Temperature:                   778.70
+------------------------------------------------------------
+Iteration   256: New better solution found
+Score:                         134687659
+Improvement:                   +112993
+Temperature:                   774.04
+------------------------------------------------------------
+Iteration   260: New better solution found
+Score:                         134800652
+Improvement:                   +112993
+Temperature:                   770.95
+------------------------------------------------------------
+Iteration   261: New better solution found
+Score:                         134913645
+Improvement:                   +112993
+Temperature:                   770.18
+------------------------------------------------------------
+Iteration   265: New better solution found
+Score:                         135026638
+Improvement:                   +112993
+Temperature:                   767.10
+------------------------------------------------------------
+Iteration   268: New better solution found
+Score:                         135139631
+Improvement:                   +112993
+Temperature:                   764.81
+------------------------------------------------------------
+Iteration   280: New better solution found
+Score:                         135252624
+Improvement:                   +112993
+Temperature:                   755.68
+------------------------------------------------------------
+Iteration   287: New better solution found
+Score:                         135365617
+Improvement:                   +112993
+Temperature:                   750.40
+------------------------------------------------------------
+Iteration   288: New better solution found
+Score:                         135478610
+Improvement:                   +112993
+Temperature:                   749.65
+------------------------------------------------------------
+Iteration   290: New better solution found
+Score:                         135591603
+Improvement:                   +112993
+Temperature:                   748.16
+------------------------------------------------------------
+Iteration   291: New better solution found
+Score:                         135704596
+Improvement:                   +112993
+Temperature:                   747.41
+------------------------------------------------------------
+Iteration   292: New better solution found
+Score:                         135817589
+Improvement:                   +112993
+Temperature:                   746.66
+------------------------------------------------------------
+Iteration   293: New better solution found
+Score:                         135930582
+Improvement:                   +112993
+Temperature:                   745.91
+------------------------------------------------------------
+Iteration   294: New better solution found
+Score:                         136043575
+Improvement:                   +112993
+Temperature:                   745.17
+------------------------------------------------------------
+Iteration   304: New better solution found
+Score:                         136156568
+Improvement:                   +112993
+Temperature:                   737.75
+------------------------------------------------------------
+Iteration   305: New better solution found
+Score:                         136269561
+Improvement:                   +112993
+Temperature:                   737.01
+------------------------------------------------------------
+Iteration   306: New better solution found
+Score:                         136382554
+Improvement:                   +112993
+Temperature:                   736.27
+------------------------------------------------------------
+Iteration   308: New better solution found
+Score:                         136495547
+Improvement:                   +112993
+Temperature:                   734.80
+------------------------------------------------------------
+Iteration   310: New better solution found
+Score:                         136496011
+Improvement:                   +464
+Temperature:                   733.33
+------------------------------------------------------------
+Iteration   313: New better solution found
+Score:                         136496121
+Improvement:                   +110
+Temperature:                   731.14
+------------------------------------------------------------
+Iteration   314: New better solution found
+Score:                         136609114
+Improvement:                   +112993
+Temperature:                   730.40
+------------------------------------------------------------
+Iteration   316: New better solution found
+Score:                         136722107
+Improvement:                   +112993
+Temperature:                   728.94
+------------------------------------------------------------
+Iteration   318: New better solution found
+Score:                         136835100
+Improvement:                   +112993
+Temperature:                   727.49
+------------------------------------------------------------
+Iteration   321: Accepted worse solution (temp: 725.31)
+Score delta:                   -66.0000
+Acceptance probability:        0.9130
+------------------------------------------------------------
+Iteration   324: New better solution found
+Score:                         136948027
+Improvement:                   +112927
+Temperature:                   723.13
+------------------------------------------------------------
+Iteration   325: New better solution found
+Score:                         137061020
+Improvement:                   +112993
+Temperature:                   722.41
+------------------------------------------------------------
+Iteration   329: New better solution found
+Score:                         137174013
+Improvement:                   +112993
+Temperature:                   719.52
+------------------------------------------------------------
+Iteration   330: New better solution found
+Score:                         137287006
+Improvement:                   +112993
+Temperature:                   718.81
+------------------------------------------------------------
+Iteration   335: New better solution found
+Score:                         137399999
+Improvement:                   +112993
+Temperature:                   715.22
+------------------------------------------------------------
+Iteration   338: New better solution found
+Score:                         137512992
+Improvement:                   +112993
+Temperature:                   713.07
+------------------------------------------------------------
+Iteration   344: New better solution found
+Score:                         137625985
+Improvement:                   +112993
+Temperature:                   708.81
+------------------------------------------------------------
+Iteration   349: New better solution found
+Score:                         137738978
+Improvement:                   +112993
+Temperature:                   705.27
+------------------------------------------------------------
+Iteration   350: New better solution found
+Score:                         137739284
+Improvement:                   +306
+Temperature:                   704.56
+------------------------------------------------------------
+Iteration   360: New better solution found
+Score:                         137852277
+Improvement:                   +112993
+Temperature:                   697.55
+------------------------------------------------------------
+Iteration   361: New better solution found
+Score:                         137965270
+Improvement:                   +112993
+Temperature:                   696.85
+------------------------------------------------------------
+Iteration   363: New better solution found
+Score:                         138078263
+Improvement:                   +112993
+Temperature:                   695.46
+------------------------------------------------------------
+Iteration   364: Accepted worse solution (temp: 694.76)
+Score delta:                   -276.0000
+Acceptance probability:        0.6722
+------------------------------------------------------------
+Iteration   366: New better solution found
+Score:                         138190980
+Improvement:                   +112717
+Temperature:                   693.38
+------------------------------------------------------------
+Iteration   373: New better solution found
+Score:                         138303973
+Improvement:                   +112993
+Temperature:                   688.54
+------------------------------------------------------------
+Iteration   379: New better solution found
+Score:                         138416754
+Improvement:                   +112781
+Temperature:                   684.42
+------------------------------------------------------------
+Iteration   383: New better solution found
+Score:                         138529747
+Improvement:                   +112993
+Temperature:                   681.68
+------------------------------------------------------------
+Iteration   384: New better solution found
+Score:                         138642740
+Improvement:                   +112993
+Temperature:                   681.00
+------------------------------------------------------------
+Iteration   385: New better solution found
+Score:                         138755733
+Improvement:                   +112993
+Temperature:                   680.32
+------------------------------------------------------------
+Iteration   397: New better solution found
+Score:                         138868438
+Improvement:                   +112705
+Temperature:                   672.20
+------------------------------------------------------------
+Iteration   398: New better solution found
+Score:                         138981431
+Improvement:                   +112993
+Temperature:                   671.53
+------------------------------------------------------------
+Iteration   399: New better solution found
+Score:                         139094424
+Improvement:                   +112993
+Temperature:                   670.86
+------------------------------------------------------------
+Iteration   401: New better solution found
+Score:                         139207417
+Improvement:                   +112993
+Temperature:                   669.52
+------------------------------------------------------------
+Iteration   409: New better solution found
+Score:                         139320410
+Improvement:                   +112993
+Temperature:                   664.18
+------------------------------------------------------------
+Iteration   418: New better solution found
+Score:                         139433403
+Improvement:                   +112993
+Temperature:                   658.22
+------------------------------------------------------------
+Iteration   421: New better solution found
+Score:                         139546396
+Improvement:                   +112993
+Temperature:                   656.25
+------------------------------------------------------------
+Iteration   422: New better solution found
+Score:                         139659389
+Improvement:                   +112993
+Temperature:                   655.60
+------------------------------------------------------------
+Iteration   429: New better solution found
+Score:                         139772382
+Improvement:                   +112993
+Temperature:                   651.02
+------------------------------------------------------------
+Iteration   431: New better solution found
+Score:                         139885375
+Improvement:                   +112993
+Temperature:                   649.72
+------------------------------------------------------------
+Iteration   437: New better solution found
+Score:                         139998368
+Improvement:                   +112993
+Temperature:                   645.83
+------------------------------------------------------------
+Iteration   441: New better solution found
+Score:                         140111361
+Improvement:                   +112993
+Temperature:                   643.25
+------------------------------------------------------------
+Iteration   450: New better solution found
+Score:                         140224354
+Improvement:                   +112993
+Temperature:                   637.48
+------------------------------------------------------------
+Iteration   456: New better solution found
+Score:                         140337347
+Improvement:                   +112993
+Temperature:                   633.67
+------------------------------------------------------------
+Iteration   457: New better solution found
+Score:                         140337671
+Improvement:                   +324
+Temperature:                   633.04
+------------------------------------------------------------
+Iteration   459: New better solution found
+Score:                         140450664
+Improvement:                   +112993
+Temperature:                   631.77
+------------------------------------------------------------
+Iteration   460: New better solution found
+Score:                         140563657
+Improvement:                   +112993
+Temperature:                   631.14
+------------------------------------------------------------
+Iteration   461: New better solution found
+Score:                         140676650
+Improvement:                   +112993
+Temperature:                   630.51
+------------------------------------------------------------
+Iteration   463: New better solution found
+Score:                         140789643
+Improvement:                   +112993
+Temperature:                   629.25
+------------------------------------------------------------
+Iteration   465: New better solution found
+Score:                         140902636
+Improvement:                   +112993
+Temperature:                   627.99
+------------------------------------------------------------
+Iteration   468: New better solution found
+Score:                         141015629
+Improvement:                   +112993
+Temperature:                   626.11
+------------------------------------------------------------
+Iteration   470: New better solution found
+Score:                         141128622
+Improvement:                   +112993
+Temperature:                   624.86
+------------------------------------------------------------
+Iteration   481: Accepted worse solution (temp: 618.02)
+Score delta:                   -176.0000
+Acceptance probability:        0.7522
+------------------------------------------------------------
+Iteration   541: Accepted worse solution (temp: 582.01)
+Score delta:                   -182.0000
+Acceptance probability:        0.7315
+------------------------------------------------------------
+Iteration   797: New better solution found
+Score:                         141128710
+Improvement:                   +88
+Temperature:                   450.50
+------------------------------------------------------------
+Iteration   858: New better solution found
+Score:                         141128914
+Improvement:                   +204
+Temperature:                   423.83
+------------------------------------------------------------
+Iteration   903: New better solution found
+Score:                         141129132
+Improvement:                   +218
+Temperature:                   405.17
+------------------------------------------------------------
+Iteration   933: New better solution found
+Score:                         141129454
+Improvement:                   +322
+Temperature:                   393.19
+------------------------------------------------------------
+Iteration   952: New better solution found
+Score:                         141129658
+Improvement:                   +204
+Temperature:                   385.78
+------------------------------------------------------------
+Iteration   983: New better solution found
+Score:                         141129780
+Improvement:                   +122
+Temperature:                   374.00
+------------------------------------------------------------
+Iteration   994: New better solution found
+Score:                         141129890
+Improvement:                   +110
+Temperature:                   369.91
+------------------------------------------------------------
+Iteration  1074: New better solution found
+Score:                         141129936
+Improvement:                   +46
+Temperature:                   341.46
+------------------------------------------------------------
+Iteration  1306: Accepted worse solution (temp: 270.72)
+Score delta:                   -108.0000
+Acceptance probability:        0.6710
+------------------------------------------------------------
+Iteration  1374: Accepted worse solution (temp: 252.92)
+Score delta:                   -6.0000
+Acceptance probability:        0.9766
+------------------------------------------------------------
+Iteration  1744: New better solution found
+Score:                         141130010
+Improvement:                   +74
+Temperature:                   174.67
+------------------------------------------------------------
+Iteration  1768: New better solution found
+Score:                         141130096
+Improvement:                   +86
+Temperature:                   170.52
+------------------------------------------------------------
+Iteration  1947: New better solution found
+Score:                         141130128
+Improvement:                   +32
+Temperature:                   142.56
+------------------------------------------------------------
+Iteration  2039: New better solution found
+Score:                         141130192
+Improvement:                   +64
+Temperature:                   130.03
+------------------------------------------------------------
+Iteration  2141: New better solution found
+Score:                         141130300
+Improvement:                   +108
+Temperature:                   117.41
+------------------------------------------------------------
+Iteration  2222: Accepted worse solution (temp: 108.27)
+Score delta:                   -22.0000
+Acceptance probability:        0.8161
+------------------------------------------------------------
+Iteration  2724: Accepted worse solution (temp: 65.52)
+Score delta:                   -32.0000
+Acceptance probability:        0.6136
+------------------------------------------------------------
+Iteration  2997: New better solution found
+Score:                         141130626
+Improvement:                   +326
+Temperature:                   49.86
+------------------------------------------------------------
+Iteration  3006: New better solution found
+Score:                         141130760
+Improvement:                   +134
+Temperature:                   49.41
+------------------------------------------------------------
+Iteration  3033: New better solution found
+Score:                         141130834
+Improvement:                   +74
+Temperature:                   48.10
+------------------------------------------------------------
+Iteration  3075: Accepted worse solution (temp: 46.12)
+Score delta:                   -12.0000
+Acceptance probability:        0.7709
+------------------------------------------------------------
+Iteration  3156: New better solution found
+Score:                         141130894
+Improvement:                   +60
+Temperature:                   42.53
+------------------------------------------------------------
+Iteration  3476: New better solution found
+Score:                         141131084
+Improvement:                   +190
+Temperature:                   30.88
+------------------------------------------------------------
+Iteration  3524: New better solution found
+Score:                         141131190
+Improvement:                   +106
+Temperature:                   29.43
+------------------------------------------------------------
